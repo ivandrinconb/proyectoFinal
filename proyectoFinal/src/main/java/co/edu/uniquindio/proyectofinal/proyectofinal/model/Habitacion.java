@@ -1,21 +1,25 @@
 package co.edu.uniquindio.proyectofinal.proyectofinal.model;
 
-public class Habitacion {
+public abstract class Habitacion {
+
     private String numero;
-    private TipoHabitacion tipoHabitacion;
     private double tarifaBase;
     private EstadoHabitacion estado;
 
     public Habitacion(String numero,
-                      TipoHabitacion tipoHabitacion,
                       double tarifaBase,
                       EstadoHabitacion estado) {
 
         this.numero = numero;
-        this.tipoHabitacion = tipoHabitacion;
         this.tarifaBase = tarifaBase;
         this.estado = estado;
     }
+
+    public abstract TipoHabitacion getTipoHabitacion();
+
+    // MÉTODOS NUEVOS PARA DARLE LÓGICA A LAS SUBCLASES (FACTORY)
+    public abstract double calcularTarifaNoche();
+    public abstract int getCapacidadMaxima();
 
     public String getNumero() {
         return numero;
@@ -23,14 +27,6 @@ public class Habitacion {
 
     public void setNumero(String numero) {
         this.numero = numero;
-    }
-
-    public TipoHabitacion getTipoHabitacion() {
-        return tipoHabitacion;
-    }
-
-    public void setTipoHabitacion(TipoHabitacion tipoHabitacion) {
-        this.tipoHabitacion = tipoHabitacion;
     }
 
     public double getTarifaBase() {
@@ -51,6 +47,6 @@ public class Habitacion {
 
     @Override
     public String toString() {
-        return numero + " - " + tipoHabitacion;
+        return numero + " - " + getTipoHabitacion() + " ($" + calcularTarifaNoche() + ")";
     }
 }

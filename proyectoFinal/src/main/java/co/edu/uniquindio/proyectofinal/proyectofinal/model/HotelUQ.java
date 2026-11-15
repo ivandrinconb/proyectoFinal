@@ -11,7 +11,6 @@ public class HotelUQ {
     private ArrayList<ServicioAdicional> servicios;
 
     public HotelUQ() {
-
         clientes = new ArrayList<>();
         administradores = new ArrayList<>();
         habitaciones = new ArrayList<>();
@@ -20,6 +19,7 @@ public class HotelUQ {
         servicios = new ArrayList<>();
     }
 
+    // --- GETTERS NECESARIOS ---
     public ArrayList<Cliente> getClientes() {
         return clientes;
     }
