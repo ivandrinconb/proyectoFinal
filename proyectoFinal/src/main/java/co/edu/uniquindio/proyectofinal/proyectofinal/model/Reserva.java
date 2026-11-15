@@ -1,5 +1,8 @@
 package co.edu.uniquindio.proyectofinal.proyectofinal.model;
 
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.EstadoReservaState;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.ReservaPendienteState;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -13,7 +16,7 @@ public class Reserva {
 
     private ArrayList<ServicioAdicional> servicios;
 
-    private EstadoReserva estado;
+    private EstadoReservaState estado;
 
     private double valorTotal;
 
@@ -31,11 +34,25 @@ public class Reserva {
         this.fechaSalida = fechaSalida;
         this.valorTotal = valorTotal;
 
-        this.estado = EstadoReserva.PENDIENTE;
+        this.estado = new ReservaPendienteState();
 
         this.servicios = new ArrayList<>();
     }
 
+    // --- MÉTODOS DE COMPORTAMIENTO (PATRÓN STATE) ---
+    public void confirmar() {
+        estado.confirmar(this);
+    }
+
+    public void cancelar() {
+        estado.cancelar(this);
+    }
+
+    public void finalizar() {
+        estado.finalizar(this);
+    }
+
+    // --- GETTERS Y SETTERS ---
     public String getCodigo() {
         return codigo;
     }
@@ -84,11 +101,11 @@ public class Reserva {
         this.servicios = servicios;
     }
 
-    public EstadoReserva getEstado() {
+    public EstadoReservaState getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoReserva estado) {
+    public void setEstado(EstadoReservaState estado) {
         this.estado = estado;
     }
 
