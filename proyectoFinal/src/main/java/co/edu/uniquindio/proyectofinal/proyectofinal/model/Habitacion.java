@@ -17,6 +17,10 @@ public abstract class Habitacion {
 
     public abstract TipoHabitacion getTipoHabitacion();
 
+    // MÉTODOS NUEVOS PARA DARLE LÓGICA A LAS SUBCLASES (FACTORY)
+    public abstract double calcularTarifaNoche();
+    public abstract int getCapacidadMaxima();
+
     public String getNumero() {
         return numero;
     }
@@ -43,6 +47,6 @@ public abstract class Habitacion {
 
     @Override
     public String toString() {
-        return numero + " - " + getTipoHabitacion();
+        return numero + " - " + getTipoHabitacion() + " ($" + calcularTarifaNoche() + ")";
     }
 }
