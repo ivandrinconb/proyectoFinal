@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="354.0" prefWidth="395.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.proyectofinal.controller.MisPuntosController">
+   <children>
+      <Text layoutX="149.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mis Puntos">
+         <font>
+            <Font name="Times New Roman Bold" size="20.0" />
+         </font>
+      </Text>
+      <Separator layoutX="14.0" layoutY="28.0" prefHeight="0.0" prefWidth="366.0" />
+      <Text layoutX="139.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Puntos Disponibles ">
+         <font>
+            <Font name="Times New Roman Bold" size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="txtPuntosDisponibles" editable="false" layoutX="122.0" layoutY="85.0" />
+      <Separator layoutX="14.0" layoutY="120.0" prefHeight="3.0" prefWidth="366.0" />
+      <Text layoutX="139.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Historial De Puntos">
+         <font>
+            <Font name="Times New Roman Bold" size="14.0" />
+         </font>
+      </Text>
+      <Button fx:id="btnCanjearPuntos" layoutX="101.0" layoutY="304.0" mnemonicParsing="false" onAction="#onActionCanjearPuntos" text="Canjear Puntos">
+         <font>
+            <Font name="Times New Roman Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="btnVolver" layoutX="230.0" layoutY="304.0" mnemonicParsing="false" onAction="#onActionVolver" text="Volver">
+         <font>
+            <Font name="Times New Roman Bold" size="12.0" />
+         </font>
+      </Button>
+      <ListView fx:id="listHistorialPuntos" layoutX="28.0" layoutY="169.0" prefHeight="106.0" prefWidth="344.0" />
+   </children>
+</AnchorPane>
