@@ -5,16 +5,20 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 
-import co.edu.uniquindio.proyectofinal.proyectofinal.model.Cliente;
-import co.edu.uniquindio.proyectofinal.proyectofinal.model.Habitacion;
-import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.*;
 import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.builder.ReservaBuilder;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.decorator.ReservaComponent;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.decorator.ReservaBase;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.decorator.ServicioAdicionalDecorator;
+import java.util.HashMap;
+import java.util.Map;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class ReservaHabitacionController {
@@ -27,6 +31,9 @@ public class ReservaHabitacionController {
 
     @FXML
     private Button btnCrearReserva;
+
+    @FXML
+    private VBox contenedorServicios;
 
     @FXML
     private Button btnVolver;
@@ -46,6 +53,9 @@ public class ReservaHabitacionController {
     @FXML
     private TextField txtValorTotal;
 
+    private Map<CheckBox, ServicioAdicional> serviciosMap =
+            new HashMap<>();
+
     @FXML
     void onActionCrearReserva(ActionEvent event) {
         Cliente cliente = cbCliente.getValue();
@@ -54,10 +64,10 @@ public class ReservaHabitacionController {
         LocalDate fechaEntrada = dateFechaEntrada.getValue();
         LocalDate fechaSalida = dateFechaSalida.getValue();
 
-        if(cliente == null ||
+        if (cliente == null ||
                 habitacion == null ||
                 fechaEntrada == null ||
-                fechaSalida == null){
+                fechaSalida == null) {
 
             Alert alerta = new Alert(Alert.AlertType.WARNING);
             alerta.setTitle("Datos incompletos");
@@ -76,7 +86,7 @@ public class ReservaHabitacionController {
                         fechaSalida
                 );
 
-        if(noches <= 0){
+        if (noches <= 0) {
 
             Alert alerta = new Alert(Alert.AlertType.WARNING);
             alerta.setTitle("Fechas incorrectas");
@@ -89,37 +99,117 @@ public class ReservaHabitacionController {
             return;
         }
 
-        double valorTotal =
+        double precioBase =
                 noches * habitacion.getTarifaBase();
+
+        ReservaComponent reservaDecorada =
+                new ReservaBase(precioBase);
+
+        for (javafx.scene.Node nodo :
+                contenedorServicios.getChildren()) {
+
+            if (nodo instanceof CheckBox checkBox
+                    && checkBox.isSelected()) {
+
+                ServicioAdicional servicio =
+                        serviciosMap.get(checkBox);
+
+                reservaDecorada =
+                        new ServicioAdicionalDecorator(
+                                reservaDecorada,
+                                servicio
+                        );
+            }
+        }
+
+        double valorTotal =
+                reservaDecorada.calcularPrecio();
 
         txtValorTotal.setText(
                 String.valueOf(valorTotal)
         );
+        for (Reserva reservaExistente :
+                SistemaController.getInstancia()
+                        .getHotelUQ()
+                        .getReservas()) {
 
-        Reserva reserva = new ReservaBuilder()
-                .setCodigo(generarCodigoReserva())
-                .setCliente(cliente)
-                .setHabitacion(habitacion)
-                .setFechaEntrada(fechaEntrada)
-                .setFechaSalida(fechaSalida)
-                .setValorTotal(valorTotal)
-                .build();
+            if (reservaExistente.getHabitacion()
+                    .equals(habitacion)
 
-        SistemaController.getInstancia()
-                .getHotelUQ()
-                .getReservas()
-                .add(reserva);
+                    &&
 
-        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-        alerta.setTitle("Reserva creada");
-        alerta.setHeaderText(null);
-        alerta.setContentText(
-                "La reserva fue creada correctamente."
-        );
-        alerta.showAndWait();
+                    reservaExistente.getEstado()
+                            != EstadoReserva.CANCELADA) {
 
-        limpiarCampos();
+                boolean fechasSeCruzan =
+                        fechaEntrada.isBefore(
+                                reservaExistente.getFechaSalida())
+                                &&
+                                fechaSalida.isAfter(
+                                        reservaExistente.getFechaEntrada());
 
+                if (fechasSeCruzan) {
+
+                    Alert alerta = new Alert(
+                            Alert.AlertType.WARNING
+                    );
+
+                    alerta.setTitle("Habitación ocupada");
+
+                    alerta.setHeaderText(null);
+
+                    alerta.setContentText(
+                            "La habitación ya tiene una reserva para esas fechas."
+                    );
+
+                    alerta.showAndWait();
+
+                    return;
+                }
+            }
+
+            Reserva reserva = new ReservaBuilder()
+                    .setCodigo(generarCodigoReserva())
+                    .setCliente(cliente)
+                    .setHabitacion(habitacion)
+                    .setFechaEntrada(fechaEntrada)
+                    .setFechaSalida(fechaSalida)
+                    .setValorTotal(valorTotal)
+                    .build();
+
+            for (javafx.scene.Node nodo :
+                    contenedorServicios.getChildren()) {
+
+                if (nodo instanceof CheckBox checkBox
+                        && checkBox.isSelected()) {
+
+                    ServicioAdicional servicio =
+                            serviciosMap.get(checkBox);
+
+                    reserva.getServicios()
+                            .add(servicio);
+                }
+            }
+
+            SistemaController.getInstancia()
+                    .getHotelUQ()
+                    .getReservas()
+                    .add(reserva);
+
+            Alert alerta = new Alert(
+                    Alert.AlertType.INFORMATION
+            );
+
+            alerta.setTitle("Reserva creada");
+            alerta.setHeaderText(null);
+            alerta.setContentText(
+                    "La reserva fue creada correctamente."
+            );
+
+            alerta.showAndWait();
+
+            limpiarCampos();
+        }
     }
 
     @FXML
@@ -156,7 +246,49 @@ public class ReservaHabitacionController {
                         .getClientes()
         );
 
+        cbHabitacion.getItems().addAll(
+                SistemaController.getInstancia()
+                        .getHotelUQ()
+                        .getHabitaciones()
+        );
+
+        txtValorTotal.setEditable(false);
+
+        cbHabitacion.setOnAction(
+                e -> actualizarValorTotal()
+        );
+
+        dateFechaEntrada.setOnAction(
+                e -> actualizarValorTotal()
+        );
+
+        dateFechaSalida.setOnAction(
+                e -> actualizarValorTotal()
+        );
+
+        for (ServicioAdicional servicio :
+                SistemaController.getInstancia()
+                        .getHotelUQ()
+                        .getServicios()) {
+
+            CheckBox checkBox =
+                    new CheckBox(servicio.toString());
+
+            serviciosMap.put(
+                    checkBox,
+                    servicio
+            );
+
+            checkBox.setOnAction(
+                    e -> actualizarValorTotal()
+            );
+
+            contenedorServicios
+                    .getChildren()
+                    .add(checkBox);
+        }
     }
+
 
     private String generarCodigoReserva() {
 
@@ -167,16 +299,87 @@ public class ReservaHabitacionController {
 
         return "R" + cantidad;
     }
-
     private void limpiarCampos() {
 
         cbCliente.setValue(null);
+
         cbHabitacion.setValue(null);
 
         dateFechaEntrada.setValue(null);
+
         dateFechaSalida.setValue(null);
 
         txtValorTotal.clear();
+
+        contenedorServicios.getChildren().forEach(
+                nodo -> {
+                    if(nodo instanceof CheckBox checkBox){
+                        checkBox.setSelected(false);
+                    }
+                }
+        );
+    }
+
+    private void actualizarValorTotal() {
+
+        Habitacion habitacion =
+                cbHabitacion.getValue();
+
+        LocalDate fechaEntrada =
+                dateFechaEntrada.getValue();
+
+        LocalDate fechaSalida =
+                dateFechaSalida.getValue();
+
+        if (habitacion == null ||
+                fechaEntrada == null ||
+                fechaSalida == null) {
+
+            txtValorTotal.clear();
+            return;
+        }
+
+        long noches =
+                ChronoUnit.DAYS.between(
+                        fechaEntrada,
+                        fechaSalida
+                );
+
+        if (noches <= 0) {
+
+            txtValorTotal.clear();
+            return;
+        }
+
+        double precioBase =
+                noches * habitacion.getTarifaBase();
+
+        ReservaComponent reservaDecorada =
+                new ReservaBase(precioBase);
+
+        for (javafx.scene.Node nodo :
+                contenedorServicios.getChildren()) {
+
+            if (nodo instanceof CheckBox checkBox
+                    && checkBox.isSelected()) {
+
+                ServicioAdicional servicio =
+                        serviciosMap.get(checkBox);
+
+                reservaDecorada =
+                        new ServicioAdicionalDecorator(
+                                reservaDecorada,
+                                servicio
+                        );
+            }
+        }
+
+        double valorTotal =
+                reservaDecorada.calcularPrecio();
+
+        txtValorTotal.setText(
+                String.valueOf(valorTotal)
+        );
     }
 
 }

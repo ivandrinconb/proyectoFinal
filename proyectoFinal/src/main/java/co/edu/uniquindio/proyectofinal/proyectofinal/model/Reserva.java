@@ -100,8 +100,14 @@ public class Reserva {
         this.valorTotal = valorTotal;
     }
 
+
     @Override
     public String toString() {
-        return codigo + " - " + cliente.getNombre();
+
+        return codigo +
+                " - " +
+                habitacion.getNumero() +
+                " - " +
+                estado;
     }
 }

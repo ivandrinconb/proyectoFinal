@@ -2,7 +2,7 @@ package co.edu.uniquindio.proyectofinal.proyectofinal.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Administrador;
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.Cliente;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -56,6 +56,8 @@ public class LoginController {
                 SistemaController.getInstancia()
                         .getHotelUQ()
                         .getClientes()) {
+            SistemaController.getInstancia()
+                    .setClienteSesion(cliente);
 
             if (cliente.getCorreo().equals(correo) &&
                     cliente.getPassword().equals(contrasena)) {
@@ -84,6 +86,41 @@ public class LoginController {
                 return;
             }
         }
+        for (Administrador administrador :
+                SistemaController.getInstancia()
+                        .getHotelUQ()
+                        .getAdministradores()) {
+
+            if (administrador.getCorreo().equals(correo)
+                    &&
+                    administrador.getPassword().equals(contrasena)) {
+
+                try {
+
+                    FXMLLoader loader = new FXMLLoader(
+                            getClass().getResource(
+                                    "/co/edu/uniquindio/proyectofinal/proyectofinal/DashboardAdministrador.fxml"
+                            )
+                    );
+
+                    Parent root = loader.load();
+
+                    Stage stage = (Stage) btnIniciarSesion
+                            .getScene()
+                            .getWindow();
+
+                    stage.setScene(new Scene(root));
+                    stage.show();
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+
+                }
+
+                return;
+            }
+            }
 
         Alert alerta = new Alert(Alert.AlertType.ERROR);
         alerta.setTitle("Error de inicio de sesión");

@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Text?>
 
 
-<AnchorPane prefHeight="481.0" prefWidth="465.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.proyectofinal.controller.TarjetaVisualController">
+<AnchorPane prefHeight="481.0" prefWidth="465.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.proyectofinal.controller.TarjetaVirtualController">
    <children>
       <Text layoutX="167.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tarjeta Virtual">
          <font>

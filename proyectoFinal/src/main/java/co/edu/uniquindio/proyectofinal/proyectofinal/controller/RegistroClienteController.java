@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.Cliente;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.CuentaPuntos;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.TarjetaVirtual;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -61,14 +63,48 @@ public class RegistroClienteController {
 
             return;
         }
+        for (Cliente clienteExistente :
+                SistemaController.getInstancia()
+                        .getHotelUQ()
+                        .getClientes()) {
+
+            if (clienteExistente.getCorreo()
+                    .equalsIgnoreCase(correo)) {
+
+                Alert alerta = new Alert(
+                        Alert.AlertType.WARNING
+                );
+
+                alerta.setTitle("Correo existente");
+
+                alerta.setHeaderText(null);
+
+                alerta.setContentText(
+                        "Ya existe un cliente con ese correo."
+                );
+
+                alerta.showAndWait();
+
+                return;
+            }
+        }
+
+        TarjetaVirtual tarjetaVirtual =
+                new TarjetaVirtual(
+                        "TV" + identificacion,
+                        0
+                );
+
+        CuentaPuntos cuentaPuntos =
+                new CuentaPuntos();
 
         Cliente cliente = new Cliente(
                 identificacion,
                 nombre,
                 correo,
                 contrasena,
-                null,
-                null
+                tarjetaVirtual,
+                cuentaPuntos
         );
 
         SistemaController.getInstancia()

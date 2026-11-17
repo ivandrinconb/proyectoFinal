@@ -43,6 +43,12 @@ public abstract class Habitacion {
 
     @Override
     public String toString() {
-        return numero + " - " + getTipoHabitacion();
+        return numero +
+                " - " +
+                getTipoHabitacion() +
+                " - $" +
+                tarifaBase +
+                " - " +
+                estado;
     }
 }

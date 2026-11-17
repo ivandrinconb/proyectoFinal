@@ -15,10 +15,19 @@ public class HotelUQ {
 
     private ArrayList<ServicioAdicional> servicios;
 
+
     public HotelUQ() {
 
         clientes = new ArrayList<>();
         administradores = new ArrayList<>();
+        administradores.add(
+                new Administrador(
+                        "A001",
+                        "Administrador",
+                        "admin@.com",
+                        "123"
+                )
+        );
         habitaciones = new ArrayList<>();
         reservas = new ArrayList<>();
         promociones = new ArrayList<>();
@@ -72,4 +81,5 @@ public class HotelUQ {
     public void setServicios(ArrayList<ServicioAdicional> servicios) {
         this.servicios = servicios;
     }
+
 }

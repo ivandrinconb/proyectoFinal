@@ -16,6 +16,8 @@ public class MisPuntosController {
     @FXML
     private URL location;
 
+
+
     @FXML
     private ListView<String> listHistorialPuntos;
 
