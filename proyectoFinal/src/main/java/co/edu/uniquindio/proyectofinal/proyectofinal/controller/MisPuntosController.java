@@ -8,7 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
-public class TarjetaVisualController {
+public class MisPuntosController {
 
     @FXML
     private ResourceBundle resources;
@@ -16,26 +16,22 @@ public class TarjetaVisualController {
     @FXML
     private URL location;
 
+
+
     @FXML
-    private Button btnRecargarSaldo;
+    private ListView<String> listHistorialPuntos;
+
+    @FXML
+    private Button btnCanjearPuntos;
 
     @FXML
     private Button btnVolver;
 
     @FXML
-    private ListView<String> listMovimientos;
+    private TextField txtPuntosDisponibles;
 
     @FXML
-    private TextField txtSaldoDisponible;
-
-    @FXML
-    private TextField txtMontoRecarga;
-
-    @FXML
-    private TextField txtNumeroTarjeta;
-
-    @FXML
-    void onActionRecargarSaldo(ActionEvent event) {
+    void onActionCanjearPuntos(ActionEvent event) {
 
     }
 
@@ -46,9 +42,9 @@ public class TarjetaVisualController {
 
     @FXML
     void initialize() {
-        txtNumeroTarjeta.setEditable(false);
-        txtSaldoDisponible.setEditable(false);
+        txtPuntosDisponibles.setEditable(false);
 
     }
+
 
 }

@@ -6,11 +6,11 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane prefHeight="422.0" prefWidth="311.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.proyectofinal.controller.ReservaHabitacionController">
+<AnchorPane prefHeight="448.0" prefWidth="311.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.proyectofinal.controller.ReservaHabitacionController">
    <children>
       <Text layoutX="64.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Reserva Habitacion">
          <font>
@@ -41,22 +41,28 @@
             <Font name="Times New Roman Bold" size="14.0" />
          </font>
       </Text>
-      <DatePicker fx:id="dateFechaSalida"  layoutX="14.0" layoutY="228.0" prefHeight="26.0" prefWidth="238.0" />
-      <TextField fx:id="txtValorTotal" editable="false" layoutX="14.0" layoutY="330.0" prefHeight="26.0" prefWidth="238.0" />
-      <Button fx:id="btnCrearReserva" layoutX="45.0" layoutY="376.0" mnemonicParsing="false" onAction="#onActionCrearReserva" text="Crear Reserva">
+      <DatePicker fx:id="dateFechaSalida" editable="false" layoutX="14.0" layoutY="228.0" prefHeight="26.0" prefWidth="238.0" />
+      <TextField fx:id="txtValorTotal" layoutX="14.0" layoutY="360.0" prefHeight="26.0" prefWidth="238.0" />
+      <Button fx:id="btnCrearReserva" layoutX="45.0" layoutY="398.0" mnemonicParsing="false" onAction="#onActionCrearReserva" text="Crear Reserva">
          <font>
             <Font name="Times New Roman Bold" size="12.0" />
          </font>
       </Button>
-      <Button fx:id="btnVolver" layoutX="161.0" layoutY="376.0" mnemonicParsing="false" onAction="#onActionVolver" text="Volver">
+      <Button fx:id="btnVolver" layoutX="161.0" layoutY="398.0" mnemonicParsing="false" onAction="#onActionVolver" text="Volver">
          <font>
             <Font name="Times New Roman Bold" size="12.0" />
          </font>
       </Button>
-      <Text layoutX="14.0" layoutY="327.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Valor Total">
+      <Text layoutX="14.0" layoutY="357.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Valor Total">
          <font>
             <Font name="Times New Roman Bold" size="14.0" />
          </font>
       </Text>
+      <Text layoutX="14.0" layoutY="278.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Servicio Adicional">
+         <font>
+            <Font name="Times New Roman Bold" size="14.0" />
+         </font>
+      </Text>
+      <VBox fx:id="contenedorServicios" layoutX="14.0" layoutY="281.0" prefHeight="59.0" prefWidth="238.0" />
    </children>
 </AnchorPane>

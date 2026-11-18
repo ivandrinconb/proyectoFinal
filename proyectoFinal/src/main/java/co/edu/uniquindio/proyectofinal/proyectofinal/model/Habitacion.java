@@ -47,6 +47,6 @@ public abstract class Habitacion {
 
     @Override
     public String toString() {
-        return numero + " - " + getTipoHabitacion() + " ($" + calcularTarifaNoche() + ")";
+        return numero + " - " + getTipoHabitacion();
     }
 }

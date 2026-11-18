@@ -1,5 +1,6 @@
 package co.edu.uniquindio.proyectofinal.proyectofinal.controller;
 
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Cliente;
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.HotelUQ;
 
 public class SistemaController {
@@ -8,8 +9,12 @@ public class SistemaController {
 
     private HotelUQ hotelUQ;
 
+    private Cliente clienteSesion;
+
     private SistemaController() {
+
         hotelUQ = new HotelUQ();
+
     }
 
     public static SistemaController getInstancia() {
@@ -25,7 +30,13 @@ public class SistemaController {
         return hotelUQ;
     }
 
-    public void setHotelUQ(HotelUQ hotelUQ) {
-        this.hotelUQ = hotelUQ;
+    public Cliente getClienteSesion() {
+        return clienteSesion;
+    }
+
+    public void setClienteSesion(
+            Cliente clienteSesion) {
+
+        this.clienteSesion = clienteSesion;
     }
 }
