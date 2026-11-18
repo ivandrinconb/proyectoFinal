@@ -35,9 +35,9 @@ public class HotelUQ {
         return instancia;
     }
 
-    // Método para precargar datos iniciales y demostrar el funcionamiento
+    // Método para precargar datos iniciales esenciales (sin quemar reservas ni clientes)
     private void inicializarDatosBase() {
-        // Administrador por defecto con tu correo exacto
+        // Administrador por defecto para poder iniciar sesión y configurar el sistema
         administradores.add(
                 new Administrador(
                         "A001",
@@ -47,13 +47,8 @@ public class HotelUQ {
                 )
         );
 
-        // Habitaciones de ejemplo (puedes adaptarlas según tus clases de Factory si ya las tienes creadas)
-        // habitaciones.add(new HabitacionEstándar("101", 150000, ...));
-
-        // Servicios adicionales de ejemplo con los 3 atributos correctos: (Nombre, Precio, Disponible)
-        servicios.add(new ServicioAdicional("Desayuno Americano", 25000.0, true));
-        servicios.add(new ServicioAdicional("Acceso a Zona Spa", 60000.0, true));
-        servicios.add(new ServicioAdicional("Parqueadero Cubierto", 20000.0, true));
+        // Las listas de clientes, habitaciones, servicios y reservas quedan vacías
+        // para que se alimenten dinámicamente desde las vistas (tal como indicó tu compañero).
     }
 
     // --- Getters y Setters ---

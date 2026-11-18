@@ -2,11 +2,14 @@ package co.edu.uniquindio.proyectofinal.proyectofinal.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.HotelUQ;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -37,7 +40,7 @@ public class GestionarReservasController {
     private ComboBox<String> cbEstado;
 
     @FXML
-    private ComboBox<String> cbSeleccionarReserva;
+    private ComboBox<Reserva> cbSeleccionarReserva;
 
     @FXML
     private DatePicker dateFechaEntrada;
@@ -56,22 +59,81 @@ public class GestionarReservasController {
 
     @FXML
     void onActionCancelarReserva(ActionEvent event) {
-        // Aquí programo la lógica para cancelar la reserva seleccionada en mi sistema
-        System.out.println("Reserva cancelada exitosamente.");
+        // Validamos si la lista de reservas está vacía
+        if (HotelUQ.getInstancia().getReservas().isEmpty()) {
+            Alert alertaVacia = new Alert(Alert.AlertType.WARNING);
+            alertaVacia.setTitle("Sin Reservas");
+            alertaVacia.setHeaderText(null);
+            alertaVacia.setContentText("No hay reservas registradas en el sistema para cancelar.");
+            alertaVacia.showAndWait();
+            return;
+        }
+
+        var reservaSeleccionada = cbSeleccionarReserva.getValue();
+
+        if (reservaSeleccionada != null) {
+            HotelUQ.getInstancia().getReservas().remove(reservaSeleccionada);
+
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Reserva Cancelada");
+            alerta.setHeaderText(null);
+            alerta.setContentText("La reserva fue cancelada y eliminada exitosamente del sistema.");
+            alerta.showAndWait();
+
+            cargarReservas();
+            onActionLimpiar(event);
+        } else {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Selección Requerida");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Por favor, seleccione una reserva de la lista para cancelar.");
+            alerta.showAndWait();
+        }
     }
 
     @FXML
     void onActionGuardarCambios(ActionEvent event) {
-        String reservaSeleccionada = cbSeleccionarReserva.getValue();
+        // 1. Validamos si la lista de reservas está vacía
+        if (HotelUQ.getInstancia().getReservas().isEmpty()) {
+            Alert alertaVacia = new Alert(Alert.AlertType.WARNING);
+            alertaVacia.setTitle("Sin Reservas");
+            alertaVacia.setHeaderText(null);
+            alertaVacia.setContentText("No hay reservas registradas en el sistema para modificar. Por favor, crea una reserva primero.");
+            alertaVacia.showAndWait();
+            return;
+        }
+
+        var reservaSeleccionada = cbSeleccionarReserva.getValue();
         String nuevoEstado = cbEstado.getValue();
         var fechaEntrada = dateFechaEntrada.getValue();
         var fechaSalida = dateFechaSalida.getValue();
+        String valorTotal = txtValorTotal.getText();
 
         if (reservaSeleccionada != null) {
-            // Aquí integro la lógica para actualizar los datos de mi reserva en el hotel
-            System.out.println("¡Cambios guardados correctamente para la reserva seleccionada!");
+
+            // 2. Validamos si hay campos vacíos o sin seleccionar
+            if (nuevoEstado == null || fechaEntrada == null || fechaSalida == null || valorTotal.isEmpty()) {
+                Alert alertaCampos = new Alert(Alert.AlertType.WARNING);
+                alertaCampos.setTitle("Campos Incompletos");
+                alertaCampos.setHeaderText(null);
+                alertaCampos.setContentText("Por favor, debes completar todos los campos obligatorios para guardar los cambios.");
+                alertaCampos.showAndWait();
+                return;
+            }
+
+            // Lógica para actualizar los datos de la reserva en el hotel
+            Alert alertaExito = new Alert(Alert.AlertType.INFORMATION);
+            alertaExito.setTitle("Cambios Guardados");
+            alertaExito.setHeaderText(null);
+            alertaExito.setContentText("¡Cambios guardados correctamente para la reserva seleccionada!");
+            alertaExito.showAndWait();
+
         } else {
-            System.out.println("Error: Debo seleccionar una reserva para guardar los cambios.");
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Selección Requerida");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Error: Debo seleccionar una reserva para guardar los cambios.");
+            alerta.showAndWait();
         }
     }
 
@@ -108,25 +170,24 @@ public class GestionarReservasController {
         // Cargo los estados posibles para una reserva en el ComboBox correspondiente
         cbEstado.getItems().addAll("Activa", "Pendiente", "Cancelada", "Completada");
 
-        // Cargo los datos iniciales necesarios para demostrar el funcionamiento operativo de la aplicación
-        cbSeleccionarReserva.getItems().addAll("Reserva #001 - Juan Pérez", "Reserva #002 - María Gómez");
+        // Cargamos las reservas reales desde el Singleton de HotelUQ
+        cargarReservas();
 
-        // Configuro el listener para que al seleccionar una reserva de la lista se autocompleten los campos
+        // Configuro el listener para autocompletar los campos al seleccionar una reserva real
         cbSeleccionarReserva.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue != null) {
-                if (newValue.contains("Juan Pérez")) {
-                    txtCliente.setText("Juan Pérez");
-                    txtHabitacion.setText("Habitación 102");
-                    txtValorTotal.setText("250000");
-                    cbEstado.setValue("Activa");
-                } else if (newValue.contains("María Gómez")) {
-                    txtCliente.setText("María Gómez");
-                    txtHabitacion.setText("Habitación 205");
-                    txtValorTotal.setText("400000");
-                    cbEstado.setValue("Pendiente");
-                }
+                // Si tu clase Reserva tiene métodos para obtener estos datos, los asignas aquí:
+                // txtCliente.setText(newValue.getCliente().getNombre());
+                // txtHabitacion.setText(newValue.getHabitacion().getNumero());
+                // txtValorTotal.setText(String.valueOf(newValue.getValorTotal()));
+                // cbEstado.setValue(newValue.getEstado().toString());
             }
         });
+    }
+
+    private void cargarReservas() {
+        cbSeleccionarReserva.getItems().clear();
+        cbSeleccionarReserva.getItems().addAll(HotelUQ.getInstancia().getReservas());
     }
 
 }

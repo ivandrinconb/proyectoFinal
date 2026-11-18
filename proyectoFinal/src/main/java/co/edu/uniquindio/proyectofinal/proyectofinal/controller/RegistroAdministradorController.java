@@ -2,11 +2,13 @@ package co.edu.uniquindio.proyectofinal.proyectofinal.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Administrador;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -46,22 +48,33 @@ public class RegistroAdministradorController {
         String contrasena = txtContrasena.getText();
 
         // Validamos que los campos no estén vacíos
-        if (!nombre.isEmpty() && !identificacion.isEmpty() && !correo.isEmpty() && !contrasena.isEmpty()) {
-
-            // TODO se conecta aquí con el modelo o gestor principal del HotelUQ si se requiere
-            // HotelUQ.getInstancia().registrarAdministrador(nombre, identificacion, correo, contrasena);
-
-            System.out.println("¡Administrador registrado con éxito: " + nombre + " (" + correo + ") !");
-
-            // Limpiamos los campos después de registrar
-            txtNombre.clear();
-            txtIdentificacion.clear();
-            txtCorreo.clear();
-            txtContrasena.clear();
-
-        } else {
-            System.out.println("Error: Todos los campos son obligatorios para registrar un administrador.");
+        if (nombre.isBlank() || identificacion.isBlank() || correo.isBlank() || contrasena.isBlank()) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Campos Vacíos");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Debe completar todos los campos para registrar un administrador.");
+            alerta.showAndWait();
+            return;
         }
+
+        // Creamos el objeto Administrador real
+        Administrador nuevoAdmin = new Administrador(identificacion, nombre, correo, contrasena);
+
+        // Lo guardamos en la lista global del hotel usando el SistemaController
+        SistemaController.getInstancia()
+                .getHotelUQ()
+                .getAdministradores()
+                .add(nuevoAdmin);
+
+        // Mostramos la ventana de éxito (Alert en lugar de consola)
+        Alert alertaExito = new Alert(Alert.AlertType.INFORMATION);
+        alertaExito.setTitle("Registro Exitoso");
+        alertaExito.setHeaderText(null);
+        alertaExito.setContentText("¡Administrador registrado con éxito: " + nombre + " (" + correo + ") !");
+        alertaExito.showAndWait();
+
+        // Limpiamos los campos después de registrar
+        limpiarCampos();
     }
 
     @FXML
@@ -79,6 +92,13 @@ public class RegistroAdministradorController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void limpiarCampos() {
+        txtNombre.clear();
+        txtIdentificacion.clear();
+        txtCorreo.clear();
+        txtContrasena.clear();
     }
 
     @FXML
