@@ -138,8 +138,7 @@ public class ReservaHabitacionController {
 
                     &&
 
-                    reservaExistente.getEstado()
-                            != EstadoReserva.CANCELADA) {
+                    reservaExistente.getEstad!= EstadoReserva.CANCELADA) {
 
                 boolean fechasSeCruzan =
                         fechaEntrada.isBefore(
