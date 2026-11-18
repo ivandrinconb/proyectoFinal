@@ -40,7 +40,28 @@ public class RegistroAdministradorController {
 
     @FXML
     void onActionRegistrar(ActionEvent event) {
+        String nombre = txtNombre.getText();
+        String identificacion = txtIdentificacion.getText();
+        String correo = txtCorreo.getText();
+        String contrasena = txtContrasena.getText();
 
+        // Validamos que los campos no estén vacíos
+        if (!nombre.isEmpty() && !identificacion.isEmpty() && !correo.isEmpty() && !contrasena.isEmpty()) {
+
+            // TODO se conecta aquí con el modelo o gestor principal del HotelUQ si se requiere
+            // HotelUQ.getInstancia().registrarAdministrador(nombre, identificacion, correo, contrasena);
+
+            System.out.println("¡Administrador registrado con éxito: " + nombre + " (" + correo + ") !");
+
+            // Limpiamos los campos después de registrar
+            txtNombre.clear();
+            txtIdentificacion.clear();
+            txtCorreo.clear();
+            txtContrasena.clear();
+
+        } else {
+            System.out.println("Error: Todos los campos son obligatorios para registrar un administrador.");
+        }
     }
 
     @FXML

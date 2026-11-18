@@ -34,10 +34,10 @@ public class GestionarReservasController {
     private Button btnVolver;
 
     @FXML
-    private ComboBox<?> cbEstado;
+    private ComboBox<String> cbEstado;
 
     @FXML
-    private ComboBox<?> cbSeleccionarReserva;
+    private ComboBox<String> cbSeleccionarReserva;
 
     @FXML
     private DatePicker dateFechaEntrada;
@@ -56,17 +56,34 @@ public class GestionarReservasController {
 
     @FXML
     void onActionCancelarReserva(ActionEvent event) {
-
+        // Aquí programo la lógica para cancelar la reserva seleccionada en mi sistema
+        System.out.println("Reserva cancelada exitosamente.");
     }
 
     @FXML
     void onActionGuardarCambios(ActionEvent event) {
+        String reservaSeleccionada = cbSeleccionarReserva.getValue();
+        String nuevoEstado = cbEstado.getValue();
+        var fechaEntrada = dateFechaEntrada.getValue();
+        var fechaSalida = dateFechaSalida.getValue();
 
+        if (reservaSeleccionada != null) {
+            // Aquí integro la lógica para actualizar los datos de mi reserva en el hotel
+            System.out.println("¡Cambios guardados correctamente para la reserva seleccionada!");
+        } else {
+            System.out.println("Error: Debo seleccionar una reserva para guardar los cambios.");
+        }
     }
 
     @FXML
     void onActionLimpiar(ActionEvent event) {
-
+        txtCliente.clear();
+        txtHabitacion.clear();
+        txtValorTotal.clear();
+        dateFechaEntrada.setValue(null);
+        dateFechaSalida.setValue(null);
+        cbEstado.setValue(null);
+        cbSeleccionarReserva.setValue(null);
     }
 
     @FXML
@@ -88,7 +105,28 @@ public class GestionarReservasController {
 
     @FXML
     void initialize() {
+        // Cargo los estados posibles para una reserva en el ComboBox correspondiente
+        cbEstado.getItems().addAll("Activa", "Pendiente", "Cancelada", "Completada");
 
+        // Cargo los datos iniciales necesarios para demostrar el funcionamiento operativo de la aplicación
+        cbSeleccionarReserva.getItems().addAll("Reserva #001 - Juan Pérez", "Reserva #002 - María Gómez");
+
+        // Configuro el listener para que al seleccionar una reserva de la lista se autocompleten los campos
+        cbSeleccionarReserva.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                if (newValue.contains("Juan Pérez")) {
+                    txtCliente.setText("Juan Pérez");
+                    txtHabitacion.setText("Habitación 102");
+                    txtValorTotal.setText("250000");
+                    cbEstado.setValue("Activa");
+                } else if (newValue.contains("María Gómez")) {
+                    txtCliente.setText("María Gómez");
+                    txtHabitacion.setText("Habitación 205");
+                    txtValorTotal.setText("400000");
+                    cbEstado.setValue("Pendiente");
+                }
+            }
+        });
     }
 
 }

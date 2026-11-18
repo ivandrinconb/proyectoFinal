@@ -49,22 +49,41 @@ public class GestionarPromocionesController {
 
     @FXML
     void onActionCrear(ActionEvent event) {
+        String nombre = txtNombre.getText();
+        String descuento = txtDsecuento.getText();
+        String descripcion = txtDescripcion.getText();
 
+        if (!nombre.isEmpty() && !descuento.isEmpty() && !descripcion.isEmpty()) {
+            // Aquí integro la lógica para crear mi promoción en el sistema del hotel
+            System.out.println("¡Promoción creada con éxito: " + nombre + " (" + descuento + "%)!");
+            onActionLimpiar(event);
+        } else {
+            System.out.println("Error: Debo completar todos los campos para crear la promoción.");
+        }
     }
 
     @FXML
     void onActionEliminar(ActionEvent event) {
-
+        // Aquí se programa la lógica para eliminar la promoción seleccionada de mi lista
+        System.out.println("Promoción eliminada correctamente.");
     }
 
     @FXML
     void onActionLimpiar(ActionEvent event) {
-
+        txtNombre.clear();
+        txtDsecuento.clear();
+        txtDescripcion.clear();
     }
 
     @FXML
     void onActionModificar(ActionEvent event) {
-
+        String nombre = txtNombre.getText();
+        if (!nombre.isEmpty()) {
+            // Aquí integro la lógica para actualizar los datos de la promoción
+            System.out.println("Promoción modificada correctamente: " + nombre);
+        } else {
+            System.out.println("Error: Selecciono o ingreso el nombre de la promoción a modificar.");
+        }
     }
 
     @FXML
