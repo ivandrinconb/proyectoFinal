@@ -1,15 +1,18 @@
 package co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state;
 
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.EstadoReserva;
+
 public class ReservaCanceladaState implements EstadoReservaState{
 
+
     @Override
-    public EstadoReservaState confirmar() {
-        return this;
+    public EstadoReserva confirmar() {
+        return EstadoReserva.CONFIRMADA;
     }
 
     @Override
-    public EstadoReservaState cancelar() {
-        return this;
+    public EstadoReserva cancelar() {
+        return EstadoReserva.CANCELADA;
     }
 
     @Override

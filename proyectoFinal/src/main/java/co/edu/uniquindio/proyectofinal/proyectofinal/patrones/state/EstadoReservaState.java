@@ -1,10 +1,13 @@
 package co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state;
 
-public interface EstadoReservaState {
-    EstadoReservaState confirmar();
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.EstadoReserva;
 
-    EstadoReservaState cancelar();
+public interface EstadoReservaState {
+    EstadoReserva confirmar();
+
+    EstadoReserva cancelar();
 
     String getNombreEstado();
+
 
 }

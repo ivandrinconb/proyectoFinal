@@ -4,6 +4,16 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.EstadoReserva;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.observer.NotificacionObserver;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.observer.ObservableReserva;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.EstadoReservaState;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.ReservaCanceladaState;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.ReservaConfirmadaState;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.ReservaPendienteState;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.strategy.GestorCancelaciones;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.strategy.PoliticaCancelacion;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import javafx.scene.control.Alert;
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
 import javafx.event.ActionEvent;
@@ -77,17 +87,24 @@ public class MisReservasController {
             return;
         }
 
-        if (reservaSeleccionada.getEstado()
-                == EstadoReserva.CANCELADA) {
+        EstadoReservaState estadoActual =
+                obtenerEstado(reservaSeleccionada);
+
+        EstadoReserva nuevoEstado =
+                estadoActual.cancelar();
+
+        if (nuevoEstado ==
+                reservaSeleccionada.getEstado()) {
 
             Alert alerta = new Alert(
                     Alert.AlertType.INFORMATION
             );
 
-            alerta.setTitle("Reserva cancelada");
+            alerta.setTitle("Operación no permitida");
             alerta.setHeaderText(null);
+
             alerta.setContentText(
-                    "La reserva ya se encuentra cancelada."
+                    "La reserva no puede ser cancelada en su estado actual."
             );
 
             alerta.showAndWait();
@@ -95,13 +112,54 @@ public class MisReservasController {
             return;
         }
 
+
+
+        long horasRestantes =
+                java.time.temporal.ChronoUnit.HOURS.between(
+                        java.time.LocalDateTime.now(),
+                        reservaSeleccionada.getFechaEntrada()
+                                .atStartOfDay()
+                );
+
+        GestorCancelaciones gestor =
+                new GestorCancelaciones();
+
+        PoliticaCancelacion politica =
+                gestor.obtenerPolitica(
+                        horasRestantes
+                );
+
+        double reembolso =
+                politica.calcularReembolso(
+                        reservaSeleccionada.getValorTotal()
+                );
+
+        reservaSeleccionada.getCliente()
+                .getTarjetaVirtual()
+                .reembolsar(
+                        reembolso
+                );
+
+
+
         reservaSeleccionada.setEstado(
-                EstadoReserva.CANCELADA
+                nuevoEstado
+        );
+        ObservableReserva observable =
+                new ObservableReserva();
+
+        observable.agregarObserver(
+                new NotificacionObserver()
+        );
+
+        observable.notificarObservers(
+                "La reserva "
+                        + reservaSeleccionada.getCodigo()
+                        + " fue cancelada."
         );
 
         txtEstado.setText(
-                reservaSeleccionada.getEstado()
-                        .toString()
+                nuevoEstado.toString()
         );
 
         listReservas.refresh();
@@ -111,13 +169,16 @@ public class MisReservasController {
         );
 
         alerta.setTitle("Reserva cancelada");
+
         alerta.setHeaderText(null);
+
         alerta.setContentText(
-                "La reserva ha sido cancelada correctamente."
+                "La reserva fue cancelada correctamente.\n\n" +
+                        "Reembolso aplicado: $" +
+                        reembolso
         );
 
         alerta.showAndWait();
-
     }
 
     @FXML
@@ -230,7 +291,7 @@ public class MisReservasController {
                               reservaAnterior,
                               reservaSeleccionada) -> {
 
-                    if(reservaSeleccionada != null){
+                    if (reservaSeleccionada != null) {
 
                         txtCodigo.setText(
                                 reservaSeleccionada.getCodigo()
@@ -269,6 +330,25 @@ public class MisReservasController {
                     }
                 });
     }
+    private EstadoReservaState obtenerEstado(
+            Reserva reserva){
+
+        switch (reserva.getEstado()) {
+
+            case PENDIENTE:
+                return new ReservaPendienteState();
+
+            case CONFIRMADA:
+                return new ReservaConfirmadaState();
+
+            case CANCELADA:
+                return new ReservaCanceladaState();
+
+            default:
+                return new ReservaPendienteState();
+        }
+    }
+
 
 
 
