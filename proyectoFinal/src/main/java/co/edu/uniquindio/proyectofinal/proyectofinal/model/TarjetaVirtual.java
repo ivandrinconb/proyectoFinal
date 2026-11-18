@@ -1,5 +1,6 @@
 package co.edu.uniquindio.proyectofinal.proyectofinal.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class TarjetaVirtual {
@@ -16,7 +17,7 @@ public class TarjetaVirtual {
         this.saldo = saldo;
         this.activa = true;
 
-        movimientos = new ArrayList<>();
+        this.movimientos = new ArrayList<>();
     }
 
     public String getNumero() {
@@ -47,8 +48,71 @@ public class TarjetaVirtual {
         return movimientos;
     }
 
-    public void setMovimientos(ArrayList<MovimientoTarjeta> movimientos) {
+    public void setMovimientos(
+            ArrayList<MovimientoTarjeta> movimientos) {
+
         this.movimientos = movimientos;
+    }
+
+    public void recargarSaldo(double monto) {
+
+        if (monto <= 0) {
+            return;
+        }
+
+        saldo += monto;
+
+        movimientos.add(
+                new MovimientoTarjeta(
+                        LocalDate.now(),
+                        monto,
+                        TipoMovimientoTarjeta.RECARGA
+                )
+        );
+    }
+
+    public boolean pagar(double valor) {
+
+        if (!activa) {
+            return false;
+        }
+
+        if (valor <= 0) {
+            return false;
+        }
+
+        if (saldo < valor) {
+            return false;
+        }
+
+        saldo -= valor;
+
+        movimientos.add(
+                new MovimientoTarjeta(
+                        LocalDate.now(),
+                        valor,
+                        TipoMovimientoTarjeta.PAGO
+                )
+        );
+
+        return true;
+    }
+
+    public void reembolsar(double valor) {
+
+        if (valor <= 0) {
+            return;
+        }
+
+        saldo += valor;
+
+        movimientos.add(
+                new MovimientoTarjeta(
+                        LocalDate.now(),
+                        valor,
+                        TipoMovimientoTarjeta.REEMBOLSO
+                )
+        );
     }
 
     @Override

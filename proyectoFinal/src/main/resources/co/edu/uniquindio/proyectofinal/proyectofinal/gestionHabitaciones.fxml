@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane prefHeight="543.0" prefWidth="369.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.proyectofinal.controller.GestionHabitacionesController">
+   <children>
+      <Text layoutX="80.0" layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Gestion De Habitaciones">
+         <font>
+            <Font name="Times New Roman Bold" size="20.0" />
+         </font>
+      </Text>
+      <Separator layoutX="8.0" layoutY="26.0" prefHeight="3.0" prefWidth="348.0" />
+      <Text layoutX="92.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Numero de habitacion">
+         <font>
+            <Font name="Times New Roman Bold" size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="txtNumeroHabitacion" layoutX="91.0" layoutY="51.0" prefHeight="26.0" prefWidth="182.0" />
+      <Text layoutX="91.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tarifa Base">
+         <font>
+            <Font name="Times New Roman Bold" size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="txtTarifaBase" layoutX="91.0" layoutY="108.0" prefHeight="26.0" prefWidth="182.0" />
+      <Text layoutX="92.0" layoutY="160.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Estado">
+         <font>
+            <Font name="Times New Roman Bold" size="14.0" />
+         </font>
+      </Text>
+      <ComboBox fx:id="cbEstado" layoutX="91.0" layoutY="163.0" prefHeight="26.0" prefWidth="182.0" />
+      <Text layoutX="91.0" layoutY="214.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tipo De Habitacion">
+         <font>
+            <Font name="Times New Roman Bold" size="14.0" />
+         </font>
+      </Text>
+      <ComboBox fx:id="cbTipoHabitacion" layoutX="91.0" layoutY="217.0" prefHeight="26.0" prefWidth="182.0" />
+      <Button fx:id="btnCrearHabitacion" layoutX="128.0" layoutY="272.0" mnemonicParsing="false" onAction="#onActionlCrearHabitacion" text="Crear Habitacion">
+         <font>
+            <Font name="Times New Roman Bold" size="12.0" />
+         </font>
+      </Button>
+      <Separator layoutX="9.0" layoutY="300.0" prefHeight="3.0" prefWidth="348.0" />
+      <Text layoutX="107.0" layoutY="329.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Habitaciones Registradas ">
+         <font>
+            <Font name="Times New Roman Bold" size="14.0" />
+         </font>
+      </Text>
+      <ListView fx:id="listHabitaciones" layoutX="33.0" layoutY="342.0" prefHeight="152.0" prefWidth="298.0" />
+      <Button fx:id="btnVolver" layoutX="155.0" layoutY="506.0" mnemonicParsing="false" onAction="#onActionVolver" text="Volver">
+         <font>
+            <Font name="Times New Roman Bold" size="12.0" />
+         </font>
+      </Button>
+      <Separator layoutX="10.0" layoutY="534.0" prefHeight="3.0" prefWidth="243.0" />
+   </children>
+</AnchorPane>

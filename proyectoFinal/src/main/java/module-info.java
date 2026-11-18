@@ -1,6 +1,7 @@
 module co.edu.uniquindio.proyectofinal.proyectofinal {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.graphics;
 
 
     opens co.edu.uniquindio.proyectofinal.proyectofinal to javafx.fxml;

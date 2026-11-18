@@ -6,13 +6,15 @@ import co.edu.uniquindio.proyectofinal.proyectofinal.model.Habitacion;
 public class HabitacionFamiliarFactory implements HabitacionFactory {
 
     @Override
-    public Habitacion crearHabitacion(String numero,
-                                      double tarifaBase) {
+    public Habitacion crearHabitacion(
+            String numero,
+            double tarifaBase,
+            EstadoHabitacion estado) {
 
         return new HabitacionFamiliar(
                 numero,
                 tarifaBase,
-                EstadoHabitacion.DISPONIBLE
+                estado
         );
     }
 }

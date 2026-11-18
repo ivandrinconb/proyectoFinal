@@ -52,6 +52,21 @@ public class Reserva {
         estado.finalizar(this);
     }
 
+    /**
+     * MÉTODO PUENTE: Traduce tu Patrón State al enum que usa la vista de Iván
+     * para evitar errores de compilación en su controlador.
+     */
+    public EstadoReserva getEstadoEnum() {
+        String nombreClase = estado.getClass().getSimpleName().toLowerCase();
+
+        if (nombreClase.contains("cancelada") || nombreClase.contains("cancelado")) {
+            return EstadoReserva.CANCELADA;
+        } else if (nombreClase.contains("confirmada") || nombreClase.contains("confirmado")) {
+            return EstadoReserva.CONFIRMADA;
+        }
+        return EstadoReserva.PENDIENTE;
+    }
+
     // --- GETTERS Y SETTERS ---
     public String getCodigo() {
         return codigo;
@@ -109,6 +124,20 @@ public class Reserva {
         this.estado = estado;
     }
 
+    /**
+     * Sobrecarga de setEstado para que acepte el enum de Iván
+     * y active las transiciones del Patrón State automáticamente.
+     */
+    public void setEstado(EstadoReserva estadoEnum) {
+        if (estadoEnum == EstadoReserva.CANCELADA) {
+            cancelar();
+        } else if (estadoEnum == EstadoReserva.CONFIRMADA) {
+            confirmar();
+        } else {
+            this.estado = new ReservaPendienteState();
+        }
+    }
+
     public double getValorTotal() {
         return valorTotal;
     }
@@ -119,6 +148,10 @@ public class Reserva {
 
     @Override
     public String toString() {
-        return codigo + " - " + cliente.getNombre();
+        return codigo +
+                " - " +
+                habitacion.getNumero() +
+                " - " +
+                estado;
     }
 }
