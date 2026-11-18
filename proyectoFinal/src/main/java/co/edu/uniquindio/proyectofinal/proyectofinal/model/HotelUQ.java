@@ -37,12 +37,12 @@ public class HotelUQ {
 
     // Método para precargar datos iniciales y demostrar el funcionamiento
     private void inicializarDatosBase() {
-        // Administrador por defecto
+        // Administrador por defecto con tu correo exacto
         administradores.add(
                 new Administrador(
                         "A001",
                         "Administrador Principal",
-                        "admin@hoteluq.com",
+                        "admin@.com",
                         "123"
                 )
         );
