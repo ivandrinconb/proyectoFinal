@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-
-<AnchorPane prefHeight="373.0" prefWidth="316.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.proyectofinal.controller.PagoReservaController">
+<AnchorPane prefHeight="373.0" prefWidth="316.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.proyectofinal.controller.PagoReservaController">
    <children>
       <Text layoutX="99.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pago Reserva">
          <font>
@@ -46,8 +42,14 @@
          </font>
       </Text>
       <TextField fx:id="txtSaldoDisponible" layoutX="46.0" layoutY="277.0" prefHeight="26.0" prefWidth="222.0" />
-      <Button fx:id="btnConfirmarPago" layoutX="53.0" layoutY="325.0" mnemonicParsing="false" onAction="#onActionConfirmarPago" text="Confirmar pago" />
-      <Button fx:id="btnCancelar" layoutX="184.0" layoutY="325.0" mnemonicParsing="false" onAction="#onActionCancelar" text="Cancelar" />
+      <Button fx:id="btnConfirmarPago" layoutX="53.0" layoutY="325.0" mnemonicParsing="false" onAction="#onActionConfirmarPago" text="Confirmar pago">
+         <font>
+            <Font name="Times New Roman Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnCancelar" layoutX="184.0" layoutY="325.0" mnemonicParsing="false" onAction="#onActionCancelar" text="Cancelar">
+         <font>
+            <Font name="Times New Roman Bold" size="12.0" />
+         </font></Button>
       <Separator layoutX="12.0" layoutY="357.0" prefHeight="3.0" prefWidth="291.0" />
    </children>
 </AnchorPane>
