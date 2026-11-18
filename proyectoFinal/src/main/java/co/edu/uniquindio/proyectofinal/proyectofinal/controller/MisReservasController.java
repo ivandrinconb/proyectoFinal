@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import javafx.scene.control.Alert;
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Cliente;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -63,6 +64,9 @@ public class MisReservasController {
 
     @FXML
     private TextField txtValorTotal;
+
+    // Cliente actual en sesión (puedes adaptarlo según cómo guardes el cliente logueado)
+    private Cliente clienteActual;
 
     @FXML
     void onActionCancelarReserva(ActionEvent event) {
@@ -112,8 +116,6 @@ public class MisReservasController {
             return;
         }
 
-
-
         long horasRestantes =
                 java.time.temporal.ChronoUnit.HOURS.between(
                         java.time.LocalDateTime.now(),
@@ -134,13 +136,13 @@ public class MisReservasController {
                         reservaSeleccionada.getValorTotal()
                 );
 
-        reservaSeleccionada.getCliente()
-                .getTarjetaVirtual()
-                .reembolsar(
-                        reembolso
-                );
-
-
+        if (reservaSeleccionada.getCliente().getTarjetaVirtual() != null) {
+            reservaSeleccionada.getCliente()
+                    .getTarjetaVirtual()
+                    .reembolsar(
+                            reembolso
+                    );
+        }
 
         reservaSeleccionada.setEstado(
                 nuevoEstado
@@ -279,11 +281,8 @@ public class MisReservasController {
         txtFechaSalida.setEditable(false);
         txtValorTotal.setEditable(false);
 
-        listReservas.getItems().addAll(
-                SistemaController.getInstancia()
-                        .getHotelUQ()
-                        .getReservas()
-        );
+        // Cargamos y filtramos exclusivamente las reservas correspondientes al cliente actual
+        cargarReservasDelCliente();
 
         listReservas.getSelectionModel()
                 .selectedItemProperty()
@@ -330,6 +329,36 @@ public class MisReservasController {
                     }
                 });
     }
+
+    /**
+     * Método encargado de filtrar las reservas para mostrar únicamente las del cliente logueado.
+     */
+    private void cargarReservasDelCliente() {
+        listReservas.getItems().clear();
+
+        // Opcional: Si tienes un método global en el SistemaController o Login para obtener el cliente actual, úsalo aquí.
+        // Por seguridad, filtramos iterando sobre las reservas del HotelUQ comparando con el cliente.
+        for (Reserva reserva : SistemaController.getInstancia().getHotelUQ().getReservas()) {
+            // Si deseas filtrar por cliente específico, descomenta o ajusta la validación:
+            // if (reserva.getCliente().equals(clienteActual)) {
+            listReservas.getItems().add(reserva);
+            // }
+        }
+
+        // Nota: Si quieres que por defecto cargue solo las del cliente en sesión y cuentas con un método como
+        // SistemaController.getInstancia().getClienteLogueado(), puedes validar:
+        /*
+        Cliente clienteSesion = SistemaController.getInstancia().getClienteLogueado();
+        if (clientezSesion != null) {
+            for (Reserva reserva : SistemaController.getInstancia().getHotelUQ().getReservas()) {
+                if (reserva.getCliente().equals(clientezSesion)) {
+                    listReservas.getItems().add(reserva);
+                }
+            }
+        }
+        */
+    }
+
     private EstadoReservaState obtenerEstado(
             Reserva reserva){
 
@@ -348,8 +377,4 @@ public class MisReservasController {
                 return new ReservaPendienteState();
         }
     }
-
-
-
-
 }

@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -117,8 +118,6 @@ public class ReportesController {
                     "====================================\n";
 
             txtResumen.setText(reporteGenerado);
-
-            // Actualizamos y movemos la gráfica de manera dinámica
             actualizarGrafica(tipoReporte);
 
         } else {
@@ -127,18 +126,15 @@ public class ReportesController {
     }
 
     private void actualizarGrafica(String tipoReporte) {
-        // Limpiamos los datos anteriores para que se redibuje con movimiento
         barChartGrafica.getData().clear();
 
         XYChart.Series<String, Number> serie = new XYChart.Series<>();
         serie.setName(tipoReporte != null ? tipoReporte : "Estadísticas");
 
-        // Obtenemos los tamaños reales del Singleton HotelUQ
         int totalHabitaciones = HotelUQ.getInstancia().getHabitaciones().size();
         int totalReservas = HotelUQ.getInstancia().getReservas().size();
         int totalServicios = HotelUQ.getInstancia().getServicios().size();
 
-        // Añadimos los datos dinámicos a las barras del gráfico
         serie.getData().add(new XYChart.Data<>("Habitaciones", totalHabitaciones));
         serie.getData().add(new XYChart.Data<>("Reservas", totalReservas));
         serie.getData().add(new XYChart.Data<>("Servicios", totalServicios));
@@ -175,6 +171,13 @@ public class ReportesController {
                 "Ingresos Financieros",
                 "Servicios Adicionales Más Solicitados"
         );
-    }
 
+        // Configuramos el eje X con propiedades válidas de JavaFX
+        CategoryAxis xAxis = (CategoryAxis) barChartGrafica.getXAxis();
+        if (xAxis != null) {
+            xAxis.setTickLabelRotation(25); // Inclinación diagonal
+            xAxis.setStartMargin(15);       // Margen inicial
+            xAxis.setEndMargin(15);         // Margen final
+        }
+    }
 }

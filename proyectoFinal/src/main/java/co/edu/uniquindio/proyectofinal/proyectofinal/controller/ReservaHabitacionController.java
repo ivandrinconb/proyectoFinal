@@ -8,8 +8,6 @@ import java.util.ResourceBundle;
 
 import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.composite.PaqueteServicios;
 import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.composite.ServicioSimple;
-import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.composite.PaqueteServicios;
-import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.composite.ServicioSimple;
 import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.facade.ReservaFacade;
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.*;
 import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.builder.ReservaBuilder;
@@ -51,6 +49,9 @@ public class ReservaHabitacionController {
     private ComboBox<Habitacion> cbHabitacion;
 
     @FXML
+    private ComboBox<Promocion> cbPromocion;
+
+    @FXML
     private DatePicker dateFechaEntrada;
 
     @FXML
@@ -59,191 +60,100 @@ public class ReservaHabitacionController {
     @FXML
     private TextField txtValorTotal;
 
-    private Map<CheckBox, ServicioAdicional> serviciosMap =
-            new HashMap<>();
-
-    private Map<CheckBox, PaqueteServicios> paquetesMap =
-            new HashMap<>();
+    private Map<CheckBox, ServicioAdicional> serviciosMap = new HashMap<>();
+    private Map<CheckBox, PaqueteServicios> paquetesMap = new HashMap<>();
 
     private CheckBox cbPaqueteBasico;
-
     private CheckBox cbPaquetePremium;
-
     private PaqueteServicios paqueteBasico;
-
     private PaqueteServicios paquetePremium;
 
     @FXML
     void onActionCrearReserva(ActionEvent event) {
         Cliente cliente = cbCliente.getValue();
-
         Habitacion habitacion = cbHabitacion.getValue();
+        LocalDate fechaEntrada = dateFechaEntrada.getValue();
+        LocalDate fechaSalida = dateFechaSalida.getValue();
 
-        LocalDate fechaEntrada =
-                dateFechaEntrada.getValue();
-
-        LocalDate fechaSalida =
-                dateFechaSalida.getValue();
-
-        if (cliente == null ||
-                habitacion == null ||
-                fechaEntrada == null ||
-                fechaSalida == null) {
-
-            Alert alerta = new Alert(
-                    Alert.AlertType.WARNING
-            );
-
+        if (cliente == null || habitacion == null || fechaEntrada == null || fechaSalida == null) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
             alerta.setTitle("Datos incompletos");
-
             alerta.setHeaderText(null);
-
-            alerta.setContentText(
-                    "Debe completar todos los campos."
-            );
-
+            alerta.setContentText("Debe completar todos los campos.");
             alerta.showAndWait();
-
             return;
         }
 
-        long noches =
-                ChronoUnit.DAYS.between(
-                        fechaEntrada,
-                        fechaSalida
-                );
+        long noches = ChronoUnit.DAYS.between(fechaEntrada, fechaSalida);
 
         if (noches <= 0) {
-
-            Alert alerta = new Alert(
-                    Alert.AlertType.WARNING
-            );
-
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
             alerta.setTitle("Fechas incorrectas");
-
             alerta.setHeaderText(null);
-
-            alerta.setContentText(
-                    "La fecha de salida debe ser posterior a la fecha de entrada."
-            );
-
+            alerta.setContentText("La fecha de salida debe ser posterior a la fecha de entrada.");
             alerta.showAndWait();
-
             return;
         }
 
-
-
-        for (Reserva reservaExistente :
-                SistemaController.getInstancia()
-                        .getHotelUQ()
-                        .getReservas()) {
-
-            if (reservaExistente.getHabitacion()
-                    .equals(habitacion)
-
-                    &&
-
-                    reservaExistente.getEstado()
-                            != EstadoReserva.CANCELADA) {
-
-                boolean fechasSeCruzan =
-                        fechaEntrada.isBefore(
-                                reservaExistente.getFechaSalida())
-                                &&
-                                fechaSalida.isAfter(
-                                        reservaExistente.getFechaEntrada());
+        for (Reserva reservaExistente : SistemaController.getInstancia().getHotelUQ().getReservas()) {
+            if (reservaExistente.getHabitacion().equals(habitacion) && reservaExistente.getEstado() != EstadoReserva.CANCELADA) {
+                boolean fechasSeCruzan = fechaEntrada.isBefore(reservaExistente.getFechaSalida()) && fechaSalida.isAfter(reservaExistente.getFechaEntrada());
 
                 if (fechasSeCruzan) {
-
-                    Alert alerta = new Alert(
-                            Alert.AlertType.WARNING
-                    );
-
+                    Alert alerta = new Alert(Alert.AlertType.WARNING);
                     alerta.setTitle("Habitación ocupada");
-
                     alerta.setHeaderText(null);
-
-                    alerta.setContentText(
-                            "La habitación ya tiene una reserva para esas fechas."
-                    );
-
+                    alerta.setContentText("La habitación ya tiene una reserva para esas fechas.");
                     alerta.showAndWait();
-
                     return;
                 }
             }
         }
 
-        ArrayList<ServicioAdicional>
-                serviciosSeleccionados =
-                new ArrayList<>();
+        ArrayList<ServicioAdicional> serviciosSeleccionados = new ArrayList<>();
 
-        for (javafx.scene.Node nodo :
-                contenedorServicios.getChildren()) {
-
-            if (nodo instanceof CheckBox checkBox
-                    && checkBox.isSelected()
-                    && serviciosMap.containsKey(checkBox)) {
-
-                serviciosSeleccionados.add(
-                        serviciosMap.get(checkBox)
-                );
+        for (javafx.scene.Node nodo : contenedorServicios.getChildren()) {
+            if (nodo instanceof CheckBox checkBox && checkBox.isSelected() && serviciosMap.containsKey(checkBox)) {
+                serviciosSeleccionados.add(serviciosMap.get(checkBox));
             }
         }
 
-        ReservaFacade facade =
-                new ReservaFacade();
+        ReservaFacade facade = new ReservaFacade();
+        Reserva reserva = facade.crearReserva(
+                generarCodigoReserva(),
+                cliente,
+                habitacion,
+                fechaEntrada,
+                fechaSalida,
+                serviciosSeleccionados
+        );
 
-        Reserva reserva =
-                facade.crearReserva(
-                        generarCodigoReserva(),
-                        cliente,
-                        habitacion,
-                        fechaEntrada,
-                        fechaSalida,
-                        serviciosSeleccionados
-                );
         double valorPaquetes = 0;
-
-        for (Map.Entry<CheckBox, PaqueteServicios> entry :
-                paquetesMap.entrySet()) {
-
+        for (Map.Entry<CheckBox, PaqueteServicios> entry : paquetesMap.entrySet()) {
             if (entry.getKey().isSelected()) {
-
-                valorPaquetes +=
-                        entry.getValue().getPrecio();
+                valorPaquetes += entry.getValue().getPrecio();
             }
         }
 
-        reserva.setValorTotal(
-                reserva.getValorTotal()
-                        + valorPaquetes
-        );
+        double subtotal = reserva.getValorTotal() + valorPaquetes;
 
-        SistemaController.getInstancia()
-                .getHotelUQ()
-                .getReservas()
-                .add(reserva);
+        // Aplicamos el descuento de la promoción seleccionada si existe
+        if (cbPromocion != null && cbPromocion.getValue() != null) {
+            Promocion promoSeleccionada = cbPromocion.getValue();
+            double descuento = subtotal * (promoSeleccionada.getPorcentajeDescuento() / 100.0);
+            subtotal -= descuento;
+        }
 
-        txtValorTotal.setText(
-                String.valueOf(
-                        reserva.getValorTotal()
-                )
-        );
+        reserva.setValorTotal(subtotal);
 
-        Alert alerta = new Alert(
-                Alert.AlertType.INFORMATION
-        );
+        SistemaController.getInstancia().getHotelUQ().getReservas().add(reserva);
 
+        txtValorTotal.setText(String.valueOf(reserva.getValorTotal()));
+
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
         alerta.setTitle("Reserva creada");
-
         alerta.setHeaderText(null);
-
-        alerta.setContentText(
-                "La reserva fue creada correctamente."
-        );
-
+        alerta.setContentText("La reserva fue creada correctamente.");
         alerta.showAndWait();
 
         limpiarCampos();
@@ -252,287 +162,136 @@ public class ReservaHabitacionController {
     @FXML
     void onActionVolver(ActionEvent event) {
         try {
-
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource(
                             "/co/edu/uniquindio/proyectofinal/proyectofinal/dashBoardCliente.fxml"
                     )
             );
-
             Parent root = loader.load();
-
             Stage stage = (Stage) btnVolver.getScene().getWindow();
-
             stage.setScene(new Scene(root));
-
             stage.show();
-
         } catch (Exception e) {
-
             e.printStackTrace();
-
         }
-
     }
 
     @FXML
     void initialize() {
         cbCliente.getItems().addAll(
-                SistemaController.getInstancia()
-                        .getHotelUQ()
-                        .getClientes()
+                SistemaController.getInstancia().getHotelUQ().getClientes()
         );
 
         cbHabitacion.getItems().addAll(
-                SistemaController.getInstancia()
-                        .getHotelUQ()
-                        .getHabitaciones()
+                SistemaController.getInstancia().getHotelUQ().getHabitaciones()
         );
+
+        if (cbPromocion != null) {
+            cbPromocion.getItems().addAll(
+                    SistemaController.getInstancia().getHotelUQ().getPromociones()
+            );
+
+            cbPromocion.setOnAction(e -> actualizarValorTotal());
+        }
 
         txtValorTotal.setEditable(false);
 
-        cbHabitacion.setOnAction(
-                e -> actualizarValorTotal()
-        );
+        cbHabitacion.setOnAction(e -> actualizarValorTotal());
+        dateFechaEntrada.setOnAction(e -> actualizarValorTotal());
+        dateFechaSalida.setOnAction(e -> actualizarValorTotal());
 
-        dateFechaEntrada.setOnAction(
-                e -> actualizarValorTotal()
-        );
-
-        dateFechaSalida.setOnAction(
-                e -> actualizarValorTotal()
-        );
-
-
-
-        for (ServicioAdicional servicio :
-                SistemaController.getInstancia()
-                        .getHotelUQ()
-                        .getServicios()) {
-
-            CheckBox checkBox =
-                    new CheckBox(
-                            servicio.toString()
-                    );
-
-            serviciosMap.put(
-                    checkBox,
-                    servicio
-            );
-
-            checkBox.setOnAction(
-                    e -> actualizarValorTotal()
-            );
-
-            contenedorServicios
-                    .getChildren()
-                    .add(checkBox);
+        for (ServicioAdicional servicio : SistemaController.getInstancia().getHotelUQ().getServicios()) {
+            CheckBox checkBox = new CheckBox(servicio.toString());
+            serviciosMap.put(checkBox, servicio);
+            checkBox.setOnAction(e -> actualizarValorTotal());
+            contenedorServicios.getChildren().add(checkBox);
         }
 
+        paqueteBasico = new PaqueteServicios("Paquete Básico");
+        paqueteBasico.agregarServicio(new ServicioSimple("Desayuno", 20000));
+        paqueteBasico.agregarServicio(new ServicioSimple("Parqueadero", 15000));
+        paqueteBasico.agregarServicio(new ServicioSimple("Wifi Premium", 10000));
 
-        paqueteBasico =
-                new PaqueteServicios(
-                        "Paquete Básico"
-                );
+        cbPaqueteBasico = new CheckBox(paqueteBasico.getNombre() + " ($" + paqueteBasico.getPrecio() + ")");
+        paquetesMap.put(cbPaqueteBasico, paqueteBasico);
+        cbPaqueteBasico.setOnAction(e -> actualizarValorTotal());
+        contenedorServicios.getChildren().add(cbPaqueteBasico);
 
-        paqueteBasico.agregarServicio(
-                new ServicioSimple(
-                        "Desayuno",
-                        20000
-                )
-        );
+        paquetePremium = new PaqueteServicios("Paquete Premium");
+        paquetePremium.agregarServicio(new ServicioSimple("Spa", 50000));
+        paquetePremium.agregarServicio(new ServicioSimple("Jacuzzi", 40000));
+        paquetePremium.agregarServicio(new ServicioSimple("Masajes", 60000));
 
-        paqueteBasico.agregarServicio(
-                new ServicioSimple(
-                        "Parqueadero",
-                        15000
-                )
-        );
-
-        paqueteBasico.agregarServicio(
-                new ServicioSimple(
-                        "Wifi Premium",
-                        10000
-                )
-        );
-
-        cbPaqueteBasico =
-                new CheckBox(
-                        paqueteBasico.getNombre()
-                                + " ($"
-                                + paqueteBasico.getPrecio()
-                                + ")"
-                );
-        paquetesMap.put(
-                cbPaqueteBasico,
-                paqueteBasico
-        );
-
-        cbPaqueteBasico.setOnAction(
-                e -> actualizarValorTotal()
-        );
-
-        contenedorServicios
-                .getChildren()
-                .add(cbPaqueteBasico);
-
-
-
-        paquetePremium =
-                new PaqueteServicios(
-                        "Paquete Premium"
-                );
-
-        paquetePremium.agregarServicio(
-                new ServicioSimple(
-                        "Spa",
-                        50000
-                )
-        );
-
-        paquetePremium.agregarServicio(
-                new ServicioSimple(
-                        "Jacuzzi",
-                        40000
-                )
-        );
-
-        paquetePremium.agregarServicio(
-                new ServicioSimple(
-                        "Masajes",
-                        60000
-                )
-        );
-
-        cbPaquetePremium =
-                new CheckBox(
-                        paquetePremium.getNombre()
-                                + " ($"
-                                + paquetePremium.getPrecio()
-                                + ")"
-                );
-        paquetesMap.put(
-                cbPaquetePremium,
-                paquetePremium
-        );
-
-        cbPaquetePremium.setOnAction(
-                e -> actualizarValorTotal()
-        );
-
-        contenedorServicios
-                .getChildren()
-                .add(cbPaquetePremium);
-
+        cbPaquetePremium = new CheckBox(paquetePremium.getNombre() + " ($" + paquetePremium.getPrecio() + ")");
+        paquetesMap.put(cbPaquetePremium, paquetePremium);
+        cbPaquetePremium.setOnAction(e -> actualizarValorTotal());
+        contenedorServicios.getChildren().add(cbPaquetePremium);
     }
-
 
     private String generarCodigoReserva() {
-
-        int cantidad = SistemaController.getInstancia()
-                .getHotelUQ()
-                .getReservas()
-                .size() + 1;
-
+        int cantidad = SistemaController.getInstancia().getHotelUQ().getReservas().size() + 1;
         return "R" + cantidad;
     }
+
     private void limpiarCampos() {
-
         cbCliente.setValue(null);
-
         cbHabitacion.setValue(null);
-
+        if (cbPromocion != null) {
+            cbPromocion.setValue(null);
+        }
         dateFechaEntrada.setValue(null);
-
         dateFechaSalida.setValue(null);
-
         txtValorTotal.clear();
 
-        contenedorServicios.getChildren().forEach(
-                nodo -> {
-                    if(nodo instanceof CheckBox checkBox){
-                        checkBox.setSelected(false);
-                    }
-                }
-        );
+        contenedorServicios.getChildren().forEach(nodo -> {
+            if (nodo instanceof CheckBox checkBox) {
+                checkBox.setSelected(false);
+            }
+        });
     }
 
     private void actualizarValorTotal() {
+        Habitacion habitacion = cbHabitacion.getValue();
+        LocalDate fechaEntrada = dateFechaEntrada.getValue();
+        LocalDate fechaSalida = dateFechaSalida.getValue();
 
-        Habitacion habitacion =
-                cbHabitacion.getValue();
-
-        LocalDate fechaEntrada =
-                dateFechaEntrada.getValue();
-
-        LocalDate fechaSalida =
-                dateFechaSalida.getValue();
-
-        if (habitacion == null ||
-                fechaEntrada == null ||
-                fechaSalida == null) {
-
+        if (habitacion == null || fechaEntrada == null || fechaSalida == null) {
             txtValorTotal.clear();
-
             return;
         }
 
-        long noches =
-                ChronoUnit.DAYS.between(
-                        fechaEntrada,
-                        fechaSalida
-                );
+        long noches = ChronoUnit.DAYS.between(fechaEntrada, fechaSalida);
 
         if (noches <= 0) {
-
             txtValorTotal.clear();
-
             return;
         }
 
-        double precioBase =
-                noches * habitacion.getTarifaBase();
+        double precioBase = noches * habitacion.getTarifaBase();
+        ReservaComponent reservaDecorada = new ReservaBase(precioBase);
 
-        ReservaComponent reservaDecorada =
-                new ReservaBase(precioBase);
-
-        for (javafx.scene.Node nodo :
-                contenedorServicios.getChildren()) {
-
-            if (nodo instanceof CheckBox checkBox
-                    && checkBox.isSelected()
-                    && serviciosMap.containsKey(checkBox)) {
-
-                ServicioAdicional servicio =
-                        serviciosMap.get(checkBox);
-
-                reservaDecorada =
-                        new ServicioAdicionalDecorator(
-                                reservaDecorada,
-                                servicio
-                        );
+        for (javafx.scene.Node nodo : contenedorServicios.getChildren()) {
+            if (nodo instanceof CheckBox checkBox && checkBox.isSelected() && serviciosMap.containsKey(checkBox)) {
+                ServicioAdicional servicio = serviciosMap.get(checkBox);
+                reservaDecorada = new ServicioAdicionalDecorator(reservaDecorada, servicio);
             }
         }
 
         double valorComposite = 0;
-
-        for (Map.Entry<CheckBox, PaqueteServicios> entry :
-                paquetesMap.entrySet()) {
-
+        for (Map.Entry<CheckBox, PaqueteServicios> entry : paquetesMap.entrySet()) {
             if (entry.getKey().isSelected()) {
-
-                valorComposite +=
-                        entry.getValue().getPrecio();
+                valorComposite += entry.getValue().getPrecio();
             }
         }
 
-        double valorTotal =
-                reservaDecorada.calcularPrecio()
-                        + valorComposite;
+        double valorTotal = reservaDecorada.calcularPrecio() + valorComposite;
 
-        txtValorTotal.setText(
-                String.valueOf(valorTotal)
-        );
+        if (cbPromocion != null && cbPromocion.getValue() != null) {
+            Promocion promoSeleccionada = cbPromocion.getValue();
+            double descuento = valorTotal * (promoSeleccionada.getPorcentajeDescuento() / 100.0);
+            valorTotal -= descuento;
+        }
+
+        txtValorTotal.setText(String.valueOf(valorTotal));
     }
-
 }
