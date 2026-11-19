@@ -4,13 +4,13 @@ import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
 
 public class ReservaPendienteState implements EstadoReservaState {
     @Override
-    public EstadoReservaState confirmar() {
-        return new ReservaConfirmadaState();
+    public EstadoReserva confirmar() {
+        return EstadoReserva.CONFIRMADA;
     }
 
     @Override
-    public EstadoReservaState cancelar() {
-        return new ReservaCanceladaState();
+    public EstadoReserva cancelar() {
+        return EstadoReserva.CANCELADA;
     }
 
     @Override

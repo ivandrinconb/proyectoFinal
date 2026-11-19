@@ -1,35 +1,22 @@
 package co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state;
 
-import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.EstadoReserva;
 
-public class ReservaCanceladaState implements EstadoReservaState {
+public class ReservaCanceladaState implements EstadoReservaState{
+
+
     @Override
-    public EstadoReservaState confirmar() {
-        return this;
+    public EstadoReserva confirmar() {
+        return EstadoReserva.CONFIRMADA;
     }
 
     @Override
-    public EstadoReservaState cancelar() {
-        return this;
+    public EstadoReserva cancelar() {
+        return EstadoReserva.CANCELADA;
     }
 
     @Override
     public String getNombreEstado() {
         return "CANCELADA";
-    }
-
-    @Override
-    public void confirmar(Reserva reserva) {
-        throw new IllegalStateException("No se puede confirmar una reserva que ya está cancelada.");
-    }
-
-    @Override
-    public void cancelar(Reserva reserva) {
-        System.out.println("La reserva ya está cancelada.");
-    }
-
-    @Override
-    public void finalizar(Reserva reserva) {
-        throw new IllegalStateException("No se puede finalizar una reserva cancelada.");
     }
 }

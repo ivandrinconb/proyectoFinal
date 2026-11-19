@@ -42,7 +42,6 @@ public class DashBoardAdministradorController {
     @FXML
     void onActionGestionarHabitaciones(ActionEvent event) {
         try {
-
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource(
                             "/co/edu/uniquindio/proyectofinal/proyectofinal/gestionHabitaciones.fxml"
@@ -59,28 +58,59 @@ public class DashBoardAdministradorController {
             stage.show();
 
         } catch (Exception e) {
-
             e.printStackTrace();
-
         }
-
-
     }
 
     @FXML
     void onActionGestionarPromociones(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/co/edu/uniquindio/proyectofinal/proyectofinal/gestionarPromociones.fxml"
+                    )
+            );
 
+            Parent root = loader.load();
+
+            Stage stage = (Stage) btnGestionarPromociones
+                    .getScene()
+                    .getWindow();
+
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void onActionGestionarReservas(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/co/edu/uniquindio/proyectofinal/proyectofinal/gestionarReservas.fxml"
+                    )
+            );
 
+            Parent root = loader.load();
+
+            Stage stage = (Stage) btnGestionarReservas
+                    .getScene()
+                    .getWindow();
+
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void onActionGestionarServicios(ActionEvent event) {
         try {
-
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource(
                             "/co/edu/uniquindio/proyectofinal/proyectofinal/gestionServicios.fxml"
@@ -97,28 +127,59 @@ public class DashBoardAdministradorController {
             stage.show();
 
         } catch (Exception e) {
-
             e.printStackTrace();
-
         }
-
-
-
     }
 
     @FXML
     void onActionRegistrarAdministrador(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/co/edu/uniquindio/proyectofinal/proyectofinal/registroAdministrador.fxml"
+                    )
+            );
 
+            Parent root = loader.load();
+
+            Stage stage = (Stage) btnRegistrarAdministrador
+                    .getScene()
+                    .getWindow();
+
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void onActionReportes(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/co/edu/uniquindio/proyectofinal/proyectofinal/reportes.fxml"
+                    )
+            );
 
+            Parent root = loader.load();
+
+            Stage stage = (Stage) btnReportes
+                    .getScene()
+                    .getWindow();
+
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
     @FXML
     void onActionCerrarSesion(ActionEvent event) {
         try {
-
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource(
                             "/co/edu/uniquindio/proyectofinal/proyectofinal/login.fxml"
@@ -135,13 +196,9 @@ public class DashBoardAdministradorController {
             stage.show();
 
         } catch (Exception e) {
-
             e.printStackTrace();
-
         }
-
     }
-
 
     @FXML
     void initialize() {

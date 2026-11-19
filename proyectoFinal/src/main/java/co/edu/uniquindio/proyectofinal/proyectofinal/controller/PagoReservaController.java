@@ -3,14 +3,22 @@ package co.edu.uniquindio.proyectofinal.proyectofinal.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.observer.NotificacionObserver;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.observer.ObservableReserva;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.EstadoReservaState;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.EstadoReserva;
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.Cliente;
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.TarjetaVirtual;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.ReservaCanceladaState;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.ReservaConfirmadaState;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.ReservaPendienteState;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -75,7 +83,103 @@ public class PagoReservaController {
 
     @FXML
     void onActionConfirmarPago(ActionEvent event) {
+        EstadoReservaState estadoActual =
+                obtenerEstado(reserva);
 
+        EstadoReserva nuevoEstado =
+                estadoActual.confirmar();
+
+        if (nuevoEstado ==
+                reserva.getEstado()) {
+
+            Alert alerta = new Alert(
+                    Alert.AlertType.INFORMATION
+            );
+
+            alerta.setTitle("Operación no permitida");
+
+            alerta.setHeaderText(null);
+
+            alerta.setContentText(
+                    "La reserva no puede ser confirmada en su estado actual."
+            );
+
+            alerta.showAndWait();
+
+            return;
+        }
+
+        boolean pagoExitoso =
+                tarjeta.pagar(
+                        reserva.getValorTotal()
+                );
+
+        if (!pagoExitoso) {
+
+            Alert alerta = new Alert(
+                    Alert.AlertType.ERROR
+            );
+
+            alerta.setTitle("Saldo insuficiente");
+
+            alerta.setHeaderText(null);
+
+            alerta.setContentText(
+                    "La tarjeta no tiene saldo suficiente."
+            );
+
+            alerta.showAndWait();
+
+            return;
+        }
+
+        reserva.setEstado(
+                nuevoEstado
+        );
+        ObservableReserva observable =
+                new ObservableReserva();
+
+        observable.agregarObserver(
+                new NotificacionObserver()
+        );
+
+        observable.notificarObservers(
+                "La reserva "
+                        + reserva.getCodigo()
+                        + " fue confirmada."
+        );
+
+        Cliente cliente =
+                reserva.getCliente();
+
+        txtSaldoDisponible.setText(
+                String.valueOf(
+                        tarjeta.getSaldo()
+                )
+        );
+        int puntosGanados =
+                (int) (reserva.getValorTotal() / 100);
+
+        cliente.getCuentaPuntos()
+                .agregarPuntos(
+                        puntosGanados
+                );
+
+        Alert alerta = new Alert(
+                Alert.AlertType.INFORMATION
+        );
+
+        alerta.setTitle("Pago exitoso");
+
+        alerta.setHeaderText(null);
+
+        alerta.setContentText(
+                "La reserva fue confirmada correctamente."
+        );
+
+        alerta.showAndWait();
+
+        onActionCancelar(event);
     }
 
     @FXML
@@ -99,7 +203,7 @@ public class PagoReservaController {
         Cliente cliente =
                 reserva.getCliente();
 
-        TarjetaVirtual tarjeta =
+        this.tarjeta =
                 cliente.getTarjetaVirtual();
 
         txtCodigoReserva.setText(
@@ -128,4 +232,23 @@ public class PagoReservaController {
         );
     }
 
+
+    private EstadoReservaState obtenerEstado(
+            Reserva reserva){
+
+        switch (reserva.getEstado()) {
+
+            case PENDIENTE:
+                return new ReservaPendienteState();
+
+            case CONFIRMADA:
+                return new ReservaConfirmadaState();
+
+            case CANCELADA:
+                return new ReservaCanceladaState();
+
+            default:
+                return new ReservaPendienteState();
+        }
+    }
 }

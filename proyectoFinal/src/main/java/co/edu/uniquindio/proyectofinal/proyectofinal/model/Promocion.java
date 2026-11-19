@@ -15,4 +15,37 @@ public class Promocion {
         this.descripcion = descripcion;
         this.porcentajeDescuento = porcentajeDescuento;
     }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public double getPorcentajeDescuento() {
+        return porcentajeDescuento;
+    }
+
+    public void setPorcentajeDescuento(double porcentajeDescuento) {
+        this.porcentajeDescuento = porcentajeDescuento;
+    }
+
+    @Override
+    public String toString() {
+
+        return nombre +
+                " - " +
+                porcentajeDescuento +
+                "%";
+    }
 }

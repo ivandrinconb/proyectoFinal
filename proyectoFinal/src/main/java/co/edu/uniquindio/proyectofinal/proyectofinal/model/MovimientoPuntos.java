@@ -13,9 +13,35 @@ public class MovimientoPuntos {
                             LocalDate fechaObtencion) {
 
         this.puntos = puntos;
+
         this.fechaObtencion = fechaObtencion;
 
         this.fechaVencimiento =
                 fechaObtencion.plusYears(1);
+    }
+
+    public int getPuntos() {
+        return puntos;
+    }
+
+    public LocalDate getFechaObtencion() {
+        return fechaObtencion;
+    }
+
+    public LocalDate getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
+    @Override
+    public String toString() {
+
+        return puntos +
+                " puntos | Obtenidos: " +
+                fechaObtencion +
+                " | Vencen: " +
+                fechaVencimiento;
+    }
+    public void setPuntos(int puntos) {
+        this.puntos = puntos;
     }
 }

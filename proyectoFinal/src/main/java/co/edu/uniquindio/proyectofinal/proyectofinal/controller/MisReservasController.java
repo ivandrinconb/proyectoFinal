@@ -77,7 +77,14 @@ public class MisReservasController {
             return;
         }
 
-        if (reservaSeleccionada.getEstadoEnum() == EstadoReserva.CANCELADA) {
+        EstadoReservaState estadoActual =
+                obtenerEstado(reservaSeleccionada);
+
+        EstadoReserva nuevoEstado =
+                estadoActual.cancelar();
+
+        if (nuevoEstado ==
+                reservaSeleccionada.getEstado()) {
 
             Alert alerta = new Alert(
                     Alert.AlertType.INFORMATION

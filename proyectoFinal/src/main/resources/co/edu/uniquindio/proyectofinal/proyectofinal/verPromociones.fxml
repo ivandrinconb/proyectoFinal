@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="450.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.proyectofinal.controller.VerPromocionesController">
+    <children>
+        <VBox alignment="CENTER" layoutX="50.0" layoutY="25.0" prefHeight="400.0" prefWidth="500.0" spacing="15.0">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <children>
+                <Label text="Promociones Disponibles">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+                <Label text="Aquí puedes consultar las ofertas y descuentos vigentes creados por el hotel." textFill="#666666" />
+
+                <!-- ListView que enlaza directamente con el controlador -->
+                <ListView fx:id="listPromocionesCliente" prefHeight="260.0" prefWidth="480.0" />
+
+                <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#onActionVolver" prefHeight="30.0" prefWidth="120.0" text="Volver" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
