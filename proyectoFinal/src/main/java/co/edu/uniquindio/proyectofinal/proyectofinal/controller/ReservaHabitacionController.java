@@ -4,24 +4,34 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
-
-import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.composite.PaqueteServicios;
-import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.composite.ServicioSimple;
-import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.facade.ReservaFacade;
-import co.edu.uniquindio.proyectofinal.proyectofinal.model.*;
-import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.builder.ReservaBuilder;
-import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.decorator.ReservaComponent;
-import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.decorator.ReservaBase;
-import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.decorator.ServicioAdicionalDecorator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
+
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Cliente;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.EstadoReserva;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Habitacion;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Promocion;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.ServicioAdicional;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.composite.PaqueteServicios;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.composite.ServicioSimple;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.decorator.ReservaBase;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.decorator.ReservaComponent;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.decorator.ServicioAdicionalDecorator;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.facade.ReservaFacade;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -60,8 +70,8 @@ public class ReservaHabitacionController {
     @FXML
     private TextField txtValorTotal;
 
-    private Map<CheckBox, ServicioAdicional> serviciosMap = new HashMap<>();
-    private Map<CheckBox, PaqueteServicios> paquetesMap = new HashMap<>();
+    private final Map<CheckBox, ServicioAdicional> serviciosMap = new HashMap<>();
+    private final Map<CheckBox, PaqueteServicios> paquetesMap = new HashMap<>();
 
     private CheckBox cbPaqueteBasico;
     private CheckBox cbPaquetePremium;
@@ -76,49 +86,46 @@ public class ReservaHabitacionController {
         LocalDate fechaSalida = dateFechaSalida.getValue();
 
         if (cliente == null || habitacion == null || fechaEntrada == null || fechaSalida == null) {
-            Alert alerta = new Alert(Alert.AlertType.WARNING);
-            alerta.setTitle("Datos incompletos");
-            alerta.setHeaderText(null);
-            alerta.setContentText("Debe completar todos los campos.");
-            alerta.showAndWait();
+            mostrarAlerta(Alert.AlertType.WARNING, "Datos incompletos", "Debe completar todos los campos.");
             return;
         }
 
         long noches = ChronoUnit.DAYS.between(fechaEntrada, fechaSalida);
 
         if (noches <= 0) {
-            Alert alerta = new Alert(Alert.AlertType.WARNING);
-            alerta.setTitle("Fechas incorrectas");
-            alerta.setHeaderText(null);
-            alerta.setContentText("La fecha de salida debe ser posterior a la fecha de entrada.");
-            alerta.showAndWait();
+            mostrarAlerta(
+                    Alert.AlertType.WARNING,
+                    "Fechas incorrectas",
+                    "La fecha de salida debe ser posterior a la fecha de entrada."
+            );
             return;
         }
 
         for (Reserva reservaExistente : SistemaController.getInstancia().getHotelUQ().getReservas()) {
-            if (reservaExistente.getHabitacion().equals(habitacion) && reservaExistente.getEstado() != EstadoReserva.CANCELADA) {
-                boolean fechasSeCruzan = fechaEntrada.isBefore(reservaExistente.getFechaSalida()) && fechaSalida.isAfter(reservaExistente.getFechaEntrada());
+            if (reservaExistente.getHabitacion().equals(habitacion)
+                    && reservaExistente.getEstadoEnum() != EstadoReserva.CANCELADA) {
+                boolean fechasSeCruzan = fechaEntrada.isBefore(reservaExistente.getFechaSalida())
+                        && fechaSalida.isAfter(reservaExistente.getFechaEntrada());
 
                 if (fechasSeCruzan) {
-                    Alert alerta = new Alert(Alert.AlertType.WARNING);
-                    alerta.setTitle("Habitación ocupada");
-                    alerta.setHeaderText(null);
-                    alerta.setContentText("La habitación ya tiene una reserva para esas fechas.");
-                    alerta.showAndWait();
+                    mostrarAlerta(
+                            Alert.AlertType.WARNING,
+                            "Habitación ocupada",
+                            "La habitación ya tiene una reserva para esas fechas."
+                    );
                     return;
                 }
             }
         }
 
         ArrayList<ServicioAdicional> serviciosSeleccionados = new ArrayList<>();
-
-        for (javafx.scene.Node nodo : contenedorServicios.getChildren()) {
+        for (Node nodo : contenedorServicios.getChildren()) {
             if (nodo instanceof CheckBox checkBox && checkBox.isSelected() && serviciosMap.containsKey(checkBox)) {
                 serviciosSeleccionados.add(serviciosMap.get(checkBox));
             }
         }
 
-        ReservaFacade facade = new ReservaFacade();
+        ReservaFacade facade = ReservaFacade.getInstancia();
         Reserva reserva = facade.crearReserva(
                 generarCodigoReserva(),
                 cliente,
@@ -137,7 +144,6 @@ public class ReservaHabitacionController {
 
         double subtotal = reserva.getValorTotal() + valorPaquetes;
 
-        // Aplicamos el descuento de la promoción seleccionada si existe
         if (cbPromocion != null && cbPromocion.getValue() != null) {
             Promocion promoSeleccionada = cbPromocion.getValue();
             double descuento = subtotal * (promoSeleccionada.getPorcentajeDescuento() / 100.0);
@@ -145,17 +151,10 @@ public class ReservaHabitacionController {
         }
 
         reserva.setValorTotal(subtotal);
-
         SistemaController.getInstancia().getHotelUQ().getReservas().add(reserva);
-
         txtValorTotal.setText(String.valueOf(reserva.getValorTotal()));
 
-        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-        alerta.setTitle("Reserva creada");
-        alerta.setHeaderText(null);
-        alerta.setContentText("La reserva fue creada correctamente.");
-        alerta.showAndWait();
-
+        mostrarAlerta(Alert.AlertType.INFORMATION, "Reserva creada", "La reserva fue creada correctamente.");
         limpiarCampos();
     }
 
@@ -190,7 +189,6 @@ public class ReservaHabitacionController {
             cbPromocion.getItems().addAll(
                     SistemaController.getInstancia().getHotelUQ().getPromociones()
             );
-
             cbPromocion.setOnAction(e -> actualizarValorTotal());
         }
 
@@ -270,7 +268,7 @@ public class ReservaHabitacionController {
         double precioBase = noches * habitacion.getTarifaBase();
         ReservaComponent reservaDecorada = new ReservaBase(precioBase);
 
-        for (javafx.scene.Node nodo : contenedorServicios.getChildren()) {
+        for (Node nodo : contenedorServicios.getChildren()) {
             if (nodo instanceof CheckBox checkBox && checkBox.isSelected() && serviciosMap.containsKey(checkBox)) {
                 ServicioAdicional servicio = serviciosMap.get(checkBox);
                 reservaDecorada = new ServicioAdicionalDecorator(reservaDecorada, servicio);
@@ -293,5 +291,13 @@ public class ReservaHabitacionController {
         }
 
         txtValorTotal.setText(String.valueOf(valorTotal));
+    }
+
+    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }

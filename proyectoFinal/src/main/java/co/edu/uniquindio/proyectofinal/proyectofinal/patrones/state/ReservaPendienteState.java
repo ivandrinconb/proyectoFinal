@@ -3,20 +3,6 @@ package co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state;
 import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
 
 public class ReservaPendienteState implements EstadoReservaState {
-    @Override
-    public EstadoReserva confirmar() {
-        return EstadoReserva.CONFIRMADA;
-    }
-
-    @Override
-    public EstadoReserva cancelar() {
-        return EstadoReserva.CANCELADA;
-    }
-
-    @Override
-    public String getNombreEstado() {
-        return "PENDIENTE";
-    }
 
     @Override
     public void confirmar(Reserva reserva) {
@@ -33,5 +19,10 @@ public class ReservaPendienteState implements EstadoReservaState {
     @Override
     public void finalizar(Reserva reserva) {
         throw new IllegalStateException("No se puede finalizar una reserva que aún está pendiente.");
+    }
+
+    @Override
+    public String getNombreEstado() {
+        return "PENDIENTE";
     }
 }
