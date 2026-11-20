@@ -34,43 +34,45 @@ public class DashBoardClienteController {
     private Button btnTarjetaVirtual;
 
     @FXML
+    private Button btnVerPromociones; // Asegúrate de agregar este fx:id en tu DashboardCliente.fxml si usas botón
+
+    @FXML
     void onActionCerrarSesion(ActionEvent event) {
         abrirVentana("Login.fxml");
-
     }
 
     @FXML
     void onActionMisPuntos(ActionEvent event) {
         abrirVentana("misPuntos.fxml");
-
     }
 
     @FXML
     void onActionMisReservas(ActionEvent event) {
         abrirVentana("misReservas.fxml");
-
     }
 
     @FXML
     void onActionReservarHabitacion(ActionEvent event) {
         abrirVentana("reservaHabitacion.fxml");
-
     }
 
     @FXML
     void onActionTarjetaVirtual(ActionEvent event) {
         abrirVentana("tarjetaVirtual.fxml");
+    }
 
+    @FXML
+    void onActionVerPromociones(ActionEvent event) {
+        abrirVentana("verPromociones.fxml");
     }
 
     @FXML
     void initialize() {
 
     }
+
     private void abrirVentana(String nombreFXML) {
-
         try {
-
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource(
                             "/co/edu/uniquindio/proyectofinal/proyectofinal/" + nombreFXML
@@ -88,11 +90,8 @@ public class DashBoardClienteController {
             stage.show();
 
         } catch (Exception e) {
-
             e.printStackTrace();
-
         }
-
     }
 
 }

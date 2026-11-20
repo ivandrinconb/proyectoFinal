@@ -12,13 +12,11 @@ public class SistemaController {
     private Cliente clienteSesion;
 
     private SistemaController() {
-
-        hotelUQ = new HotelUQ();
-
+        // Obtenemos la instancia única del hotel en lugar de crear un objeto nuevo
+        hotelUQ = HotelUQ.getInstancia();
     }
 
     public static SistemaController getInstancia() {
-
         if (instancia == null) {
             instancia = new SistemaController();
         }
@@ -34,9 +32,7 @@ public class SistemaController {
         return clienteSesion;
     }
 
-    public void setClienteSesion(
-            Cliente clienteSesion) {
-
+    public void setClienteSesion(Cliente clienteSesion) {
         this.clienteSesion = clienteSesion;
     }
 }

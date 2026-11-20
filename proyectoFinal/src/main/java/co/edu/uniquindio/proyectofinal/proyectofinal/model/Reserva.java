@@ -1,5 +1,8 @@
 package co.edu.uniquindio.proyectofinal.proyectofinal.model;
 
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.EstadoReservaState;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state.ReservaPendienteState;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -13,7 +16,7 @@ public class Reserva {
 
     private ArrayList<ServicioAdicional> servicios;
 
-    private EstadoReserva estado;
+    private EstadoReservaState estado;
 
     private double valorTotal;
 
@@ -31,11 +34,40 @@ public class Reserva {
         this.fechaSalida = fechaSalida;
         this.valorTotal = valorTotal;
 
-        this.estado = EstadoReserva.PENDIENTE;
+        this.estado = new ReservaPendienteState();
 
         this.servicios = new ArrayList<>();
     }
 
+    // --- MÉTODOS DE COMPORTAMIENTO (PATRÓN STATE) ---
+    public void confirmar() {
+        estado.confirmar(this);
+    }
+
+    public void cancelar() {
+        estado.cancelar(this);
+    }
+
+    public void finalizar() {
+        estado.finalizar(this);
+    }
+
+    /**
+     * MÉTODO PUENTE: Traduce tu Patrón State al enum que usa la vista de Iván
+     * para evitar errores de compilación en su controlador.
+     */
+    public EstadoReserva getEstadoEnum() {
+        String nombreClase = estado.getClass().getSimpleName().toLowerCase();
+
+        if (nombreClase.contains("cancelada") || nombreClase.contains("cancelado")) {
+            return EstadoReserva.CANCELADA;
+        } else if (nombreClase.contains("confirmada") || nombreClase.contains("confirmado")) {
+            return EstadoReserva.CONFIRMADA;
+        }
+        return EstadoReserva.PENDIENTE;
+    }
+
+    // --- GETTERS Y SETTERS ---
     public String getCodigo() {
         return codigo;
     }
@@ -84,12 +116,26 @@ public class Reserva {
         this.servicios = servicios;
     }
 
-    public EstadoReserva getEstado() {
+    public EstadoReservaState getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoReserva estado) {
+    public void setEstado(EstadoReservaState estado) {
         this.estado = estado;
+    }
+
+    /**
+     * Sobrecarga de setEstado para que acepte el enum de Iván
+     * y active las transiciones del Patrón State automáticamente.
+     */
+    public void setEstado(EstadoReserva estadoEnum) {
+        if (estadoEnum == EstadoReserva.CANCELADA) {
+            cancelar();
+        } else if (estadoEnum == EstadoReserva.CONFIRMADA) {
+            confirmar();
+        } else {
+            this.estado = new ReservaPendienteState();
+        }
     }
 
     public double getValorTotal() {
@@ -100,10 +146,8 @@ public class Reserva {
         this.valorTotal = valorTotal;
     }
 
-
     @Override
     public String toString() {
-
         return codigo +
                 " - " +
                 habitacion.getNumero() +

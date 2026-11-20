@@ -1,17 +1,24 @@
 package co.edu.uniquindio.proyectofinal.proyectofinal.patrones.state;
 
-import co.edu.uniquindio.proyectofinal.proyectofinal.model.EstadoReserva;
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.Reserva;
 
-public class ReservaConfirmadaState implements EstadoReservaState{
+public class ReservaConfirmadaState implements EstadoReservaState {
 
     @Override
-    public EstadoReserva confirmar() {
-        return EstadoReserva.CONFIRMADA;
+    public void confirmar(Reserva reserva) {
+        System.out.println("La reserva ya se encuentra confirmada.");
     }
 
     @Override
-    public EstadoReserva cancelar() {
-        return EstadoReserva.CANCELADA;
+    public void cancelar(Reserva reserva) {
+        reserva.setEstado(new ReservaCanceladaState());
+        System.out.println("La reserva confirmada ha sido cancelada.");
+    }
+
+    @Override
+    public void finalizar(Reserva reserva) {
+        reserva.setEstado(new ReservaFinalizadaState());
+        System.out.println("La reserva ha sido finalizada.");
     }
 
     @Override

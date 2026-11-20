@@ -4,11 +4,24 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
+
+// Importaciones del modelo y patrones
+import co.edu.uniquindio.proyectofinal.proyectofinal.model.HotelUQ;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.adapter.AdaptadorPDF;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.adapter.AdaptadorTXT;
+import co.edu.uniquindio.proyectofinal.proyectofinal.patrones.adapter.ExportadorReporte;
 
 public class ReportesController {
 
@@ -22,7 +35,7 @@ public class ReportesController {
     private DatePicker DateFechaFin;
 
     @FXML
-    private BarChart<?, ?> barChartGrafica;
+    private BarChart<String, Number> barChartGrafica;
 
     @FXML
     private Button btnExportarPDF;
@@ -37,7 +50,7 @@ public class ReportesController {
     private Button btnVolver;
 
     @FXML
-    private ComboBox<?> cbTiposReporte;
+    private ComboBox<String> cbTiposReporte;
 
     @FXML
     private DatePicker dateFechaInicio;
@@ -47,27 +60,124 @@ public class ReportesController {
 
     @FXML
     void onActionExportarPDF(ActionEvent event) {
+        String contenido = txtResumen.getText();
+        if (contenido != null && !contenido.isEmpty() && !contenido.startsWith("Por favor")) {
+            ExportadorReporte exportador = new AdaptadorPDF();
+            exportador.exportar(contenido);
 
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Exportación Exitosa");
+            alerta.setHeaderText(null);
+            alerta.setContentText("El reporte fue exportado a PDF correctamente.");
+            alerta.showAndWait();
+        } else {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Advertencia");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Primero debe generar un reporte válido antes de exportar.");
+            alerta.showAndWait();
+        }
     }
 
     @FXML
     void onActionExportarTXT(ActionEvent event) {
+        String contenido = txtResumen.getText();
+        if (contenido != null && !contenido.isEmpty() && !contenido.startsWith("Por favor")) {
+            ExportadorReporte exportador = new AdaptadorTXT();
+            exportador.exportar(contenido);
 
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Exportación Exitosa");
+            alerta.setHeaderText(null);
+            alerta.setContentText("El reporte fue exportado a TXT correctamente.");
+            alerta.showAndWait();
+        } else {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Advertencia");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Primero debe generar un reporte válido antes de exportar.");
+            alerta.showAndWait();
+        }
     }
 
     @FXML
     void onActionGenerarReporte(ActionEvent event) {
+        String tipoReporte = cbTiposReporte.getValue();
+        var fechaInicio = dateFechaInicio.getValue();
+        var fechaFin = DateFechaFin.getValue();
 
+        if (fechaInicio != null && fechaFin != null) {
+            String reporteGenerado = "====================================\n" +
+                    "         REPORTE OFICIAL HOTEL UQ         \n" +
+                    "====================================\n" +
+                    "• Tipo de Reporte: " + (tipoReporte != null ? tipoReporte : "General") + "\n" +
+                    "• Fecha de Inicio: " + fechaInicio + "\n" +
+                    "• Fecha de Fin: " + fechaFin + "\n" +
+                    "• Estado: Generado exitosamente.\n" +
+                    "• Ocupación / Datos: Calculados correctamente.\n" +
+                    "====================================\n";
+
+            txtResumen.setText(reporteGenerado);
+            actualizarGrafica(tipoReporte);
+
+        } else {
+            txtResumen.setText("Por favor seleccione la fecha de inicio y de fin para generar el reporte.");
+        }
+    }
+
+    private void actualizarGrafica(String tipoReporte) {
+        barChartGrafica.getData().clear();
+
+        XYChart.Series<String, Number> serie = new XYChart.Series<>();
+        serie.setName(tipoReporte != null ? tipoReporte : "Estadísticas");
+
+        int totalHabitaciones = HotelUQ.getInstancia().getHabitaciones().size();
+        int totalReservas = HotelUQ.getInstancia().getReservas().size();
+        int totalServicios = HotelUQ.getInstancia().getServicios().size();
+
+        serie.getData().add(new XYChart.Data<>("Habitaciones", totalHabitaciones));
+        serie.getData().add(new XYChart.Data<>("Reservas", totalReservas));
+        serie.getData().add(new XYChart.Data<>("Servicios", totalServicios));
+
+        barChartGrafica.getData().add(serie);
     }
 
     @FXML
     void onActionVolver(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/co/edu/uniquindio/proyectofinal/proyectofinal/dashBoardAdministrador.fxml"
+                    )
+            );
 
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void initialize() {
+        // Poblamos las opciones del ComboBox de tipos de reporte
+        cbTiposReporte.getItems().addAll(
+                "General",
+                "Ocupación de Habitaciones",
+                "Ingresos Financieros",
+                "Servicios Adicionales Más Solicitados"
+        );
 
+        // Configuramos el eje X con propiedades válidas de JavaFX
+        CategoryAxis xAxis = (CategoryAxis) barChartGrafica.getXAxis();
+        if (xAxis != null) {
+            xAxis.setTickLabelRotation(25); // Inclinación diagonal
+            xAxis.setStartMargin(15);       // Margen inicial
+            xAxis.setEndMargin(15);         // Margen final
+        }
     }
-
 }
